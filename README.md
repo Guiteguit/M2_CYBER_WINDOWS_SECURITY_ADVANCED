@@ -1,12 +1,12 @@
-# M2 — Sécurité avancée des systèmes Windows — Jour 3
+# M2 — Sécurité avancée des systèmes Windows — Jour 4
 
 Fil rouge : **NovaCorp**
 
 Méthode : **DESIGN → BUILD → TEST → REVIEW → FIX → VALIDATE**
 
 Modules :
-- M07 — Windows LAPS
-- M08 — gMSA + concepts PAM
-- M09 — AD CS / PKI
-- M10 — IIS + TLS
-- M11 — MFA / AD FS / Entra ID
+- M12 — BitLocker
+- M13 — Defender / Firewall / AppLocker / PowerShell Security
+- M14 — RDP / WinRM / Windows Admin Center
+- M15 — Sysmon + Wazuh
+- M16 — Greenbone / OpenVAS
