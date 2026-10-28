@@ -1,14 +1,26 @@
+# Secrets / credentials
+.env
+.env.*
+secrets/
+credentials/
+*.kdbx
+
+# Certificates / private keys
 *.pfx
 *.p12
 *.key
 *.pem
-*.cer
-*.crt
-*.kdbx
-secrets/
-credentials/
-.env
+
+# Keep public certificates possible only if explicitly needed
+# *.cer
+# *.crt
+
+# OS / editors
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Temporary / logs
+*.tmp
+*.log
