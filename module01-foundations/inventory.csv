@@ -1,0 +1,5 @@
+Hostname,Role,IPv4,Mask,Gateway,DNS,OS,Firewall,RDP,WinRM,Owner
+DC01,,,,,,,,,,
+SRV01,,,,,,,,,,
+CLT01,,,,,,,,,,
+CLT02,,,,,,,,,,

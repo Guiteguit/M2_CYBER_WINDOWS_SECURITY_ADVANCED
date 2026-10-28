@@ -1,0 +1,25 @@
+# Secrets / certificats / clés
+*.pfx
+*.p12
+*.key
+*.pem
+*.cer
+*.crt
+*.kdbx
+
+# Exports sensibles
+*secret*
+*password*
+*recovery*
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Logs temporaires
+*.log
+*.tmp
