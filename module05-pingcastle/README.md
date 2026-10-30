@@ -1,51 +1,127 @@
 # Module 05 — Audit Active Directory avec PingCastle
 
-## Contexte
+## Contexte NovaCorp
 
-Votre domaine fonctionne désormais depuis plusieurs modules. Le RSSI souhaite obtenir une première photographie de sa posture de sécurité.
+Le domaine `novacorp.local` fonctionne désormais depuis plusieurs modules.
 
-Votre mission est d'utiliser PingCastle pour identifier les risques de configuration Active Directory et prioriser les améliorations.
+Le RSSI souhaite obtenir une première photographie de la posture de sécurité Active Directory avant de poursuivre les travaux. L'objectif n'est pas d'obtenir un score parfait, mais de transformer un rapport automatisé en **décisions de sécurité argumentées**.
+
+PingCastle doit donc être utilisé comme un outil d'aide à l'audit, pas comme une liste de paramètres à corriger aveuglément.
+
+---
 
 ## Objectifs
 
-- exécuter un audit AD ;
-- comprendre qu'un score n'est pas une vérité absolue ;
-- distinguer constat, risque et recommandation ;
-- prioriser les corrections ;
-- comparer une posture avant/après remédiation.
+À la fin du module, vous devez être capables de :
+
+- exécuter un audit Active Directory ;
+- comprendre les grandes familles de risques remontées ;
+- distinguer **constat, risque, impact, priorité et remédiation** ;
+- identifier les faux positifs, risques acceptés et limites propres au laboratoire ;
+- corriger plusieurs constats sans dégrader l'environnement ;
+- comparer une posture avant/après ;
+- expliquer pourquoi un score automatisé ne remplace pas une analyse humaine.
+
+---
 
 ## Mission
 
-1. Déployer ou exécuter PingCastle dans votre environnement.
-2. Réaliser un Health Check.
-3. Examiner les résultats.
-4. Identifier cinq constats pertinents.
-5. Corriger au moins deux problèmes sans dégrader le fonctionnement du lab.
-6. Relancer l'audit.
-7. Comparer les résultats.
+Réalisez un Health Check PingCastle de NovaCorp.
+
+Votre travail doit suivre la logique :
+
+```text
+AUDITER
+   ↓
+COMPRENDRE
+   ↓
+PRIORISER
+   ↓
+CORRIGER
+   ↓
+VALIDER
+   ↓
+COMPARER
+```
+
+Vous devez :
+
+1. produire un audit initial ;
+2. sélectionner au moins cinq constats pertinents ;
+3. analyser leur risque réel pour NovaCorp ;
+4. classer chaque constat ;
+5. choisir au moins deux remédiations raisonnables ;
+6. tester les impacts avant/après ;
+7. relancer l'audit ;
+8. expliquer les différences observées.
+
+---
+
+## Classification attendue
+
+Pour chaque finding important, classez-le dans une catégorie :
+
+- **action immédiate** ;
+- **à traiter dans un module ultérieur** ;
+- **risque accepté dans le laboratoire** ;
+- **informatif** ;
+- **à confirmer manuellement**.
+
+Vous devez être capables de justifier cette classification.
+
+---
+
+## Analyse des findings
+
+Pour chacun des cinq constats retenus, documentez au minimum :
+
+| Élément | Contenu attendu |
+|---|---|
+| Finding | règle / constat PingCastle |
+| Risque | ce qui pourrait réellement arriver |
+| Impact NovaCorp | conséquences dans votre environnement |
+| Probabilité / exposition | faible / moyenne / forte, argumentée |
+| Correction possible | action envisagée |
+| Risque de la correction | ce qui pourrait casser |
+| Priorité | P1 / P2 / P3 ou équivalent |
+| Décision | corriger / reporter / accepter / investiguer |
+
+---
 
 ## Contraintes
 
-- Ne cherchez pas à obtenir un score parfait.
-- Une recommandation doit être comprise avant correction.
-- Ne corrigez pas un paramètre uniquement pour faire baisser un score.
-- Les impacts opérationnels doivent être pris en compte.
+- Ne cherchez pas à obtenir un score de 0.
+- Ne modifiez pas une configuration uniquement pour faire baisser le score.
+- Une correction doit être comprise avant application.
+- Les impacts opérationnels doivent être évalués.
+- Une recommandation pertinente en production peut être inutile ou impossible dans un lab.
+- Un finding supprimé du rapport n'est pas une preuve suffisante : vérifiez aussi le fonctionnement réel.
+
+---
 
 ## Travail distribué
 
-- A : exécution de l'audit
+- A : exécution et conservation des rapports
 - B : analyse comptes / privilèges
 - C : analyse configuration / politiques
 - D : priorisation / risque
 - E : validation des remédiations / comparaison avant-après
 
-## Questions
+Dans un groupe de 4, fusionnez analyse et validation.
 
-1. Quel est le constat le plus critique pour votre environnement ?
-2. Quel constat possède un score élevé mais un risque réel faible dans votre lab ?
-3. Quelle correction pourrait avoir un impact en production ?
-4. Quelles limites identifiez-vous à un outil d'audit automatisé ?
-5. Quels contrôles humains doivent compléter PingCastle ?
+---
+
+## Questions de réflexion
+
+1. Quel constat présente le risque réel le plus important pour NovaCorp ?
+2. Quel finding a un score élevé mais une priorité faible dans votre laboratoire ?
+3. Quelle correction pourrait provoquer une panne ou une incompatibilité en production ?
+4. Pourquoi certaines recommandations doivent-elles être reportées à un module ultérieur ?
+5. Quelle différence entre **score PingCastle** et **risque métier** ?
+6. Quels contrôles humains complètent nécessairement l'audit automatisé ?
+7. Pourquoi “faire disparaître un finding” n'est-il pas toujours synonyme de sécurisation ?
+
+---
 
 ## Livrables
 
@@ -53,15 +129,78 @@ Votre mission est d'utiliser PingCastle pour identifier les risques de configura
 - `remediation.md`
 - `comparison.md`
 
-N'ajoutez pas de secrets ou de données sensibles dans le repo.
+### `top-risks.md`
+
+Doit contenir :
+
+- les cinq constats retenus ;
+- leur classification ;
+- leur priorité ;
+- leur justification ;
+- les éventuels risques acceptés.
+
+### `remediation.md`
+
+Doit contenir :
+
+- remédiations choisies ;
+- justification ;
+- risques de changement ;
+- méthode de test ;
+- résultat obtenu.
+
+### `comparison.md`
+
+Doit contenir :
+
+- score avant/après ;
+- findings disparus ;
+- findings toujours présents ;
+- findings volontairement non corrigés ;
+- explication des écarts.
+
+N'ajoutez aucun secret dans le repository.
+
+---
+
+## Validation
+
+Le module est réussi si :
+
+```text
+[ ] audit initial conservé
+[ ] cinq constats réellement analysés
+[ ] priorisation argumentée
+[ ] risques de changement identifiés
+[ ] au moins deux remédiations testées
+[ ] fonctionnement du lab validé après correction
+[ ] second audit réalisé
+[ ] comparaison avant/après expliquée
+[ ] au moins un finding non corrigé est volontairement justifié
+```
+
+---
+
+## Restitution
+
+Répondez à la question :
+
+> **Pourquoi le finding ayant le plus de points n'est-il pas nécessairement la première chose que NovaCorp doit corriger ?**
+
+---
 
 ## Checkpoint M05
 
-- [ ] audit initial réalisé ;
-- [ ] cinq constats analysés ;
-- [ ] risques priorisés ;
-- [ ] au moins deux remédiations testées ;
-- [ ] nouvel audit réalisé ;
-- [ ] comparaison documentée.
+Avant de poursuivre :
+
+```text
+Audit compris
++
+risques priorisés
++
+remédiations validées
++
+comparaison argumentée
+```
 
 Snapshot : `M05-AUDIT-OK`.
