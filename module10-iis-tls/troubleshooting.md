@@ -1,195 +1,190 @@
 # M10 — Troubleshooting IIS / TLS / Kerberos
 
-## Méthode imposée
+## Principe
+
+Ce document fournit des **pistes d'observation**, pas des corrections.
 
 Pour chaque incident :
 
 ```text
-1. Décrire le symptôme
-2. Formuler plusieurs hypothèses
-3. Collecter des preuves
+1. Décrire précisément le symptôme
+2. Proposer au moins deux hypothèses
+3. Choisir une preuve permettant de départager les hypothèses
 4. Isoler la cause
-5. Corriger
+5. Corriger un seul élément
 6. Rejouer le test
-7. Documenter la preuve finale
+7. Conserver la preuve finale
 ```
-
-Ne faites pas de changement “au hasard”.
 
 ---
 
-# Incident 1 — SPN absent
+# Incident A — Le site ne répond pas en HTTPS
 
-## Symptôme possible
+## Symptômes possibles
 
-- le site est accessible ;
-- Windows Authentication fonctionne ;
-- Kerberos n'est pas démontré ;
-- une négociation peut retomber sur NTLM.
+- timeout ;
+- connexion refusée ;
+- mauvais site IIS ;
+- certificat non présenté ;
+- erreur de nom ou de confiance.
 
-## Points à investiguer
+## Boîte à outils
 
-```powershell
-setspn -Q HTTP/web.novacorp.local
-setspn -L NOVACORP\gmsa-demo$
-```
-
-Vérifiez également :
-
-```powershell
-klist
-klist get HTTP/web.novacorp.local
+```text
+Resolve-DnsName
+Test-NetConnection
+Get-Website
+Get-WebBinding
+Get-ChildItem Cert:\LocalMachine\My
 ```
 
 ## Questions
 
-- Quel compte doit porter le SPN dans l'architecture NovaCorp ?
-- Pourquoi l'absence de SPN n'empêche-t-elle pas nécessairement tout accès Windows Authentication ?
-- Quelle preuve permet de différencier Kerberos d'un fallback NTLM ?
+- Le problème est-il DNS, transport, IIS ou TLS ?
+- Le certificat correspond-il au nom utilisé ?
+- Le site écouté sur 443 est-il le bon ?
 
 ---
 
-# Incident 2 — SPN dupliqué
+# Incident B — Le SSO fonctionne, mais Kerberos n'est pas prouvé
 
-## Injection formateur
+## Symptôme
 
-Créer volontairement un doublon uniquement dans un environnement de laboratoire maîtrisé, puis demander aux étudiants de le détecter.
+Le navigateur n'affiche aucune popup, mais aucune preuve Kerberos n'est disponible.
 
-## Diagnostic
+## Boîte à outils
 
-```powershell
-setspn -Q HTTP/web.novacorp.local
+```text
+klist
+klist get <SPN>
+setspn -Q <SPN>
+setspn -L <compte>
+```
+
+## Questions
+
+- Un fallback NTLM est-il possible ?
+- Le SPN existe-t-il ?
+- Est-il porté par la bonne identité ?
+- Le client demande-t-il réellement le bon SPN ?
+
+---
+
+# Incident C — SPN absent ou porté par le mauvais compte
+
+## Symptômes possibles
+
+- Kerberos ne fonctionne pas ;
+- NTLM fonctionne ;
+- le ticket HTTP attendu n'apparaît pas.
+
+## Boîte à outils
+
+```text
+setspn -Q <SPN>
+setspn -L <compte>
+```
+
+## Questions
+
+- Quelle identité exécute le service ?
+- Quel objet AD doit porter le SPN ?
+- Pourquoi l'absence de SPN n'empêche-t-elle pas forcément tout accès ?
+
+---
+
+# Incident D — SPN dupliqué
+
+## Symptômes possibles
+
+- comportement Kerberos incohérent ;
+- erreurs d'authentification ;
+- ticket non utilisable.
+
+## Boîte à outils
+
+```text
+setspn -Q <SPN>
 setspn -X
 ```
 
 ## Questions
 
-- Pourquoi Kerberos a-t-il besoin d'un SPN unique ?
-- Pourquoi `setspn -S` est-il préférable à `setspn -A` ?
-- Quel objet AD possède actuellement le SPN attendu ?
-
-## Validation
-
-Après correction :
-
-```powershell
-setspn -Q HTTP/web.novacorp.local
-klist purge
-klist get HTTP/web.novacorp.local
-```
+- Pourquoi Kerberos exige-t-il l'unicité du SPN ?
+- Quels objets possèdent le même SPN ?
+- Quelle inscription est légitime ?
 
 ---
 
-# Incident 3 — DNS incorrect
+# Incident E — DNS incorrect
 
-## Symptôme possible
+## Symptômes possibles
 
-- le client atteint une mauvaise IP ;
-- le nom du certificat ne correspond pas au nom utilisé ;
-- le SPN demandé ne correspond pas au service visé ;
-- HTTP/HTTPS peut échouer avant même l'authentification.
+- mauvaise IP ;
+- mauvais certificat ;
+- mauvais SPN demandé ;
+- service injoignable.
 
-## Diagnostic
+## Boîte à outils
 
-```powershell
-Resolve-DnsName web.novacorp.local
+```text
+Resolve-DnsName
 ipconfig /all
-Test-NetConnection web.novacorp.local -Port 443
+Test-NetConnection
 ```
-
-Comparez la réponse DNS avec l'adresse réelle de `SRV01`.
 
 ## Questions
 
-- Pourquoi DNS intervient-il à la fois dans l'accès au service et indirectement dans Kerberos ?
-- Pourquoi tester uniquement `ping` est-il insuffisant ?
+- Le FQDN pointe-t-il vers le bon serveur ?
+- Quel nom est réellement utilisé par le navigateur ?
+- Pourquoi DNS intervient-il indirectement dans Kerberos ?
 
 ---
 
-# Incident 4 — NTLM au lieu de Kerberos
+# Incident F — Edge demande les credentials
 
 ## Symptôme
 
-Le SSO semble fonctionner, mais aucune preuve Kerberos n'est observée.
+Le site répond mais le navigateur demande l'utilisateur et le mot de passe.
 
-## Diagnostic
+## Points à investiguer
 
-Vérifiez successivement :
-
-```powershell
-setspn -Q HTTP/web.novacorp.local
-setspn -L NOVACORP\gmsa-demo$
-klist
-klist get HTTP/web.novacorp.local
-```
-
-Puis contrôlez IIS :
-
-```text
-Windows Authentication = Enabled
-Providers = Negotiate puis NTLM
-useKernelMode = True
-useAppPoolCredentials = True
-```
-
-Contrôlez également les événements de connexion sur `SRV01` lorsque l'audit le permet.
-
-## Hypothèses possibles
-
-- SPN absent ;
-- SPN sur le mauvais compte ;
-- SPN dupliqué ;
-- accès au site avec un autre nom que `web.novacorp.local` ;
-- provider / configuration IIS incorrect ;
-- ticket non obtenu ;
-- comportement navigateur.
+- zone de sécurité du site ;
+- paramètres d'authentification IIS ;
+- identité de l'utilisateur ;
+- provider utilisé.
 
 ## Question
 
-Pourquoi “aucune popup de credentials” ne suffit-il pas à prouver Kerberos ?
+Pourquoi ce symptôme ne prouve-t-il pas que le serveur IIS ou Kerberos sont mal configurés ?
 
 ---
 
-# Incident 5 — Zone Intranet local
+# Incident G — Le gMSA fonctionne mais le site retourne 401/500
 
-## Symptôme
+## Points à investiguer
 
-Le site répond correctement mais Edge demande les identifiants Windows.
-
-## Diagnostic
-
-Vérifiez le classement du site :
-
-```text
-inetcpl.cpl
-→ Sécurité
-→ Intranet local
-→ Sites
-→ Avancé
-```
-
-Le site de lab attendu est :
-
-```text
-https://web.novacorp.local
-```
-
-## Validation
-
-Fermez / relancez le navigateur puis ouvrez le site.
+- état de l'Application Pool ;
+- identité configurée ;
+- droits NTFS ;
+- logs IIS ;
+- événements système ;
+- configuration Windows Authentication.
 
 ## Question
 
-Pourquoi la zone de sécurité du navigateur affecte-t-elle l'envoi automatique de l'identité Windows ?
+Pourquoi `Test-ADServiceAccount = True` ne prouve-t-il pas que l'application IIS est correctement configurée ?
 
 ---
 
 # Matrice de restitution
 
-| Incident | Symptôme | Première preuve | Cause | Correction | Validation |
-|---|---|---|---|---|---|
-| SPN absent | | | | | |
-| SPN dupliqué | | | | | |
-| DNS incorrect | | | | | |
-| NTLM au lieu de Kerberos | | | | | |
-| Zone Intranet local | | | | | |
+| Incident | Symptôme | Hypothèses | Preuve décisive | Cause | Correction | Validation |
+|---|---|---|---|---|---|---|
+| HTTPS | | | | | | |
+| Kerberos non prouvé | | | | | | |
+| SPN incorrect | | | | | | |
+| SPN dupliqué | | | | | | |
+| DNS | | | | | | |
+| Navigateur | | | | | | |
+| gMSA / AppPool | | | | | | |

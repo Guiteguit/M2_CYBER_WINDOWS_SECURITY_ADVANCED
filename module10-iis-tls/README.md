@@ -8,26 +8,40 @@ NovaCorp souhaite publier un intranet interne sécurisé sur :
 https://web.novacorp.local
 ```
 
-Le module réutilise directement les briques construites précédemment :
+Ce module réutilise les briques construites précédemment :
 
-- **M08** : compte de service géré `NOVACORP\\gmsa-demo$` ;
-- **M09** : PKI NovaCorp et certificat TLS valide pour `web.novacorp.local` ;
-- **M10** : IIS, TLS, identité de processus, authentification Windows et SSO Kerberos.
+- **M08** : le gMSA `NOVACORP\gmsa-demo$` ;
+- **M09** : la PKI NovaCorp et le certificat TLS de `web.novacorp.local`.
 
-L'objectif n'est pas seulement d'obtenir un cadenas HTTPS. Vous devez distinguer quatre sujets différents :
+Votre objectif n'est pas de suivre une recette IIS.
+
+Vous devez concevoir, construire, tester et expliquer une architecture dans laquelle :
 
 ```text
-TLS      → protège le transport et authentifie le serveur
-IIS      → publie l'application Web
-Kerberos → authentifie l'utilisateur auprès du service HTTP
-MFA      → ajoute un ou plusieurs facteurs à une authentification
+CLT01
+   ↓
+https://web.novacorp.local
+   ↓
+SRV01 / IIS
+   ↓
+NovaCorp-AppPool
+   ↓
+NOVACORP\gmsa-demo$
 ```
 
-Un site peut donc être correctement protégé en TLS tout en utilisant une mauvaise identité de processus, ou fonctionner en SSO Windows tout en retombant sur NTLM.
+avec :
+
+```text
+TLS      → confidentialité, intégrité et identité du serveur
+Kerberos → authentification de l'utilisateur auprès du service HTTP
+gMSA     → identité d'exécution du processus IIS
+```
+
+Ces trois mécanismes répondent à des problèmes différents.
 
 ---
 
-## Infrastructure
+# Infrastructure imposée
 
 | Élément | Valeur |
 |---|---|
@@ -37,11 +51,11 @@ Un site peut donc être correctement protégé en TLS tout en utilisant une mauv
 | Client domaine | `CLT01` |
 | Site | `NovaCorp-Web` |
 | URL | `https://web.novacorp.local` |
-| Répertoire Web | `C:\\inetpub\\NovaCorp-Web` |
+| Répertoire Web | `C:\inetpub\NovaCorp-Web` |
 | Application Pool | `NovaCorp-AppPool` |
-| Identité AppPool | `NOVACORP\\gmsa-demo$` |
-| SPN HTTP | `HTTP/web.novacorp.local` |
-| Certificat | émis par la PKI NovaCorp |
+| Identité AppPool | `NOVACORP\gmsa-demo$` |
+| Certificat | PKI NovaCorp |
+| Authentification finale | Windows Authentication / Kerberos |
 
 ---
 
@@ -49,637 +63,521 @@ Un site peut donc être correctement protégé en TLS tout en utilisant une mauv
 
 À la fin du module, vous devez être capables de :
 
-- installer et valider IIS ;
-- publier un site avec un nom DNS dédié ;
-- réutiliser un certificat issu d'une PKI interne ;
-- configurer un binding HTTPS avec SNI ;
+- publier un site IIS avec un nom DNS dédié ;
+- réutiliser correctement un certificat issu d'une PKI interne ;
+- expliquer le rôle d'un binding HTTPS et du SNI ;
 - exécuter un Application Pool avec un gMSA ;
 - expliquer les échanges Kerberos **AS-REQ / AS-REP / TGS-REQ / TGS-REP** ;
 - distinguer **TGT** et **ticket de service** ;
 - expliquer le rôle d'un **SPN** ;
-- configurer Windows Authentication sur IIS ;
+- mettre en place une authentification Windows intégrée ;
 - distinguer **Kerberos** de **NTLM** ;
-- expliquer le rôle de la zone **Intranet local** pour l'authentification intégrée du navigateur ;
-- prouver, par des éléments techniques, si Kerberos est réellement utilisé ;
-- diagnostiquer un SPN absent, dupliqué ou porté par le mauvais compte.
+- expliquer le rôle de la zone **Intranet local** du navigateur ;
+- démontrer techniquement que Kerberos est utilisé ;
+- diagnostiquer un problème DNS, TLS, SPN, IIS ou navigateur.
 
 ---
 
-# 1. Installer et valider IIS
+# Règle du module
 
-Sur `SRV01` :
+Vous pouvez utiliser :
 
-```powershell
-Install-WindowsFeature `
-    Web-Server, `
-    Web-Windows-Auth, `
-    Web-Mgmt-Console `
-    -IncludeManagementTools
-```
+- IIS Manager ;
+- PowerShell ;
+- `appcmd` ;
+- les consoles MMC ;
+- les outils Kerberos / SPN ;
+- la documentation Microsoft.
 
-Vérifiez le service et le site par défaut :
+Le choix de la méthode vous appartient.
 
-```powershell
-Get-Service W3SVC
-Get-Website
-Invoke-WebRequest http://localhost -UseBasicParsing
-```
-
-Résultats attendus :
+Vous devez toutefois être capables d'expliquer :
 
 ```text
-W3SVC = Running
-Default Web Site = Started
-HTTP local = 200
-```
-
-Créez ensuite le répertoire du site :
-
-```powershell
-New-Item -Path "C:\inetpub\NovaCorp-Web" `
-    -ItemType Directory -Force
-```
-
-Puis le site :
-
-```powershell
-Import-Module WebAdministration
-
-New-Website `
-    -Name "NovaCorp-Web" `
-    -PhysicalPath "C:\inetpub\NovaCorp-Web" `
-    -Port 80 `
-    -HostHeader "web.novacorp.local"
-```
-
-Le DNS interne doit résoudre :
-
-```text
-web.novacorp.local → SRV01
-```
-
-Depuis `CLT01`, vérifiez d'abord la résolution DNS puis l'accès HTTP.
-
-```powershell
-Resolve-DnsName web.novacorp.local
-Test-NetConnection web.novacorp.local -Port 80
+ce que vous configurez
++
+pourquoi vous le configurez
++
+comment vous prouvez que cela fonctionne
 ```
 
 ---
 
-# 2. Réutiliser la PKI NovaCorp
+# Mission 1 — Publier l'intranet NovaCorp
 
-Le certificat créé au M09 doit correspondre au **nom réellement utilisé par les clients** :
+Construisez sur `SRV01` un site IIS nommé :
+
+```text
+NovaCorp-Web
+```
+
+qui répond au nom :
 
 ```text
 web.novacorp.local
 ```
 
-Vérifiez le magasin machine de `SRV01` :
+Contraintes :
 
-```powershell
-Get-ChildItem Cert:\LocalMachine\My |
-    Select-Object Subject,Issuer,NotAfter,HasPrivateKey,Thumbprint
-```
+- le contenu Web doit être stocké dans `C:\inetpub\NovaCorp-Web` ;
+- le DNS interne doit permettre à `CLT01` de résoudre le FQDN ;
+- le site doit être accessible depuis `CLT01` ;
+- vous devez identifier les composants IIS réellement nécessaires ;
+- vous devez conserver une preuve de l'état du site.
 
-Contrôles attendus :
+## Questions
 
-- SAN contenant `web.novacorp.local` ;
-- EKU **Server Authentication** ;
-- certificat non expiré ;
-- `HasPrivateKey = True` ;
-- chaîne reconnue par `CLT01`.
+1. Pourquoi utiliser un FQDN dédié plutôt que `SRV01` directement ?
+2. Quel rôle joue le Host Header ?
+3. Quelle différence entre le service IIS, un site IIS et un Application Pool ?
+4. Pourquoi un test `ping` ne suffit-il pas pour valider un service Web ?
 
-> Un certificat valide pour `SRV01` n'est pas automatiquement valide pour `web.novacorp.local`. Le SAN doit correspondre au nom utilisé dans l'URL.
+## Preuves attendues
+
+- résolution DNS correcte ;
+- port du service accessible ;
+- site IIS démarré ;
+- réponse HTTP obtenue depuis `CLT01`.
 
 ---
 
-# 3. Configurer HTTPS
+# Mission 2 — Passer de HTTP à HTTPS
 
-Ajoutez une liaison IIS :
-
-```text
-Type     : https
-Port     : 443
-Hostname : web.novacorp.local
-SNI      : activé
-Certificat : certificat NovaCorp du site
-```
-
-Vérifiez :
-
-```powershell
-Get-WebBinding -Name "NovaCorp-Web"
-netsh http show sslcert
-```
-
-Depuis `CLT01` :
-
-```powershell
-Test-NetConnection web.novacorp.local -Port 443
-```
-
-Puis ouvrez :
+Réutilisez le certificat délivré au M09 pour sécuriser :
 
 ```text
 https://web.novacorp.local
 ```
 
-Le navigateur doit présenter le site **sans avertissement de certificat**.
+Contraintes :
+
+- le certificat doit correspondre au nom réellement utilisé par les clients ;
+- la clé privée doit être disponible sur `SRV01` ;
+- le client doit faire confiance à la chaîne de certification ;
+- le site final doit répondre sur 443 ;
+- le SNI doit être compris et justifié.
+
+## Questions
+
+1. Pourquoi un certificat valide pour `SRV01` n'est-il pas forcément valide pour `web.novacorp.local` ?
+2. Quelle différence entre Subject, SAN, EKU et clé privée ?
+3. À quoi sert SNI ?
+4. Que protège TLS ?
+5. Que **ne protège pas** TLS ?
+
+## Preuves attendues
+
+- certificat adapté au FQDN ;
+- chaîne de confiance valide côté `CLT01` ;
+- accès HTTPS sans avertissement ;
+- binding HTTPS documenté.
 
 ---
 
-# 4. Exécuter IIS avec un gMSA
+# Mission 3 — Exécuter IIS avec le gMSA
 
-Le compte `gmsa-demo$` a été préparé au M08.
-
-Sur `SRV01`, vérifiez :
-
-```powershell
-Test-ADServiceAccount -Identity gmsa-demo
-```
-
-Résultat attendu :
+Le processus applicatif doit utiliser :
 
 ```text
-True
+NOVACORP\gmsa-demo$
 ```
 
-Créez l'Application Pool :
+Vous devez :
 
-```powershell
-New-WebAppPool -Name "NovaCorp-AppPool"
+- créer ou utiliser un Application Pool dédié ;
+- associer ce pool à `NovaCorp-Web` ;
+- configurer le gMSA comme identité du pool ;
+- accorder uniquement les droits NTFS nécessaires au contenu Web ;
+- démontrer que le site fonctionne toujours.
 
-Set-ItemProperty "IIS:\AppPools\NovaCorp-AppPool" `
-    -Name managedRuntimeVersion -Value ""
-```
+## Questions
 
-Configurez son identité :
+1. Quelle différence entre l'identité TLS et l'identité du processus IIS ?
+2. Pourquoi le gMSA n'a-t-il pas besoin d'un mot de passe saisi manuellement ?
+3. Pourquoi ne faut-il pas donner `Full Control` au gMSA sur le répertoire Web ?
+4. Quels droits le processus IIS a-t-il réellement besoin d'avoir dans ce scénario ?
 
-```powershell
-$appcmd = "$env:windir\System32\inetsrv\appcmd.exe"
+## Preuves attendues
 
-& $appcmd set apppool "NovaCorp-AppPool" `
-    /processModel.identityType:SpecificUser `
-    /processModel.userName:"NOVACORP\gmsa-demo$" `
-    /processModel.password:""
-```
-
-Donnez uniquement les droits nécessaires sur le contenu Web :
-
-```powershell
-icacls "C:\inetpub\NovaCorp-Web" /grant 'NOVACORP\gmsa-demo$:(OI)(CI)RX'
-```
-
-Associez le pool au site :
-
-```powershell
-Set-ItemProperty "IIS:\Sites\NovaCorp-Web" `
-    -Name applicationPool -Value "NovaCorp-AppPool"
-
-Restart-WebAppPool "NovaCorp-AppPool"
-```
-
-Validez que le site continue de répondre en HTTPS.
-
-## Point pédagogique
-
-```text
-Identité TLS            ≠ identité du processus
-web.novacorp.local        NOVACORP\gmsa-demo$
-```
-
-Le certificat identifie le **serveur Web auprès du client**.
-Le gMSA identifie le **processus IIS auprès de Windows / Active Directory**.
+- gMSA utilisable depuis `SRV01` ;
+- Application Pool démarré ;
+- identité du pool documentée ;
+- droits NTFS justifiés ;
+- site toujours fonctionnel en HTTPS.
 
 ---
 
-# 5. Kerberos — fonctionnement théorique
+# Mission 4 — Comprendre Kerberos avant de le configurer
 
-## Les acteurs
-
-```text
-CLT01                   DC01 / KDC                     SRV01 / IIS
-Utilisateur             Active Directory              web.novacorp.local
-                                                   AppPool : gmsa-demo$
-```
-
-Le KDC est porté par les contrôleurs de domaine et fournit deux services logiques :
-
-- **AS — Authentication Service** : délivre le TGT ;
-- **TGS — Ticket Granting Service** : délivre les tickets de service.
-
-## Étape 1 — obtenir un TGT
+Avant toute configuration SSO, produisez un schéma montrant :
 
 ```text
-CLT01                     DC01
-  |                        |
-  |------ AS-REQ --------->|
-  |<----- AS-REP ----------|
-  |                        |
-  |   TGT obtenu           |
+CLT01          DC01 / KDC                  SRV01
+  |                |                         |
+  |--- AS-REQ ---->|                         |
+  |<-- AS-REP -----|                         |
+  |     TGT        |                         |
+  |                |                         |
+  |--- TGS-REQ --->|                         |
+  |  HTTP/...      |                         |
+  |<-- TGS-REP ----|                         |
+  | ticket service |                         |
+  |                                          |
+  |----------- requête HTTP + ticket ------->|
 ```
 
-Le **TGT** ne donne pas accès directement au site IIS. Il sert à demander d'autres tickets au KDC.
+Votre explication doit contenir :
 
-## Étape 2 — demander un ticket HTTP
+- KDC ;
+- TGT ;
+- ticket de service ;
+- SPN ;
+- service HTTP ;
+- rôle de l'identité portant le SPN.
 
-Lorsque l'utilisateur ouvre :
+## Questions
 
-```text
-https://web.novacorp.local
-```
+1. Le mot de passe de l'utilisateur est-il envoyé à `SRV01` ?
+2. Quelle différence entre TGT et ticket de service ?
+3. Pourquoi Kerberos a-t-il besoin d'un SPN ?
+4. Pourquoi un SPN doit-il être unique ?
+5. Quelle différence entre l'utilisateur authentifié et l'identité qui exécute IIS ?
 
-le client doit identifier le service :
+---
+
+# Mission 5 — Mettre en place le SSO Windows
+
+Configurez `NovaCorp-Web` afin que l'utilisateur connecté au domaine puisse accéder au site sans ressaisir ses identifiants.
+
+Contraintes :
+
+- Anonymous Authentication doit être désactivée ;
+- Windows Authentication doit être activée ;
+- **Negotiate** doit être disponible avant NTLM ;
+- le SPN HTTP doit correspondre au FQDN réellement utilisé ;
+- le SPN doit être porté par l'identité cohérente avec l'architecture de l'Application Pool ;
+- le navigateur doit pouvoir envoyer automatiquement l'identité Windows ;
+- un simple SSO sans popup ne suffit pas à prouver Kerberos.
+
+Le SPN attendu est lié au service :
 
 ```text
 HTTP/web.novacorp.local
 ```
 
-Il demande alors un ticket :
+Vous devez déterminer sur quel objet AD il doit être porté et pourquoi.
 
-```text
-CLT01                     DC01
-  |                        |
-  |------ TGS-REQ -------->|
-  |   HTTP/web...          |
-  |<----- TGS-REP ---------|
-  |                        |
-  | ticket de service HTTP |
-```
+## Questions
 
-## Étape 3 — présenter le ticket à IIS
-
-```text
-CLT01                                     SRV01
-  |                                         |
-  |---- HTTPS + ticket Kerberos ----------->|
-  |                                         |
-  |                     IIS valide l'identité
-  |<------------- page intranet ------------|
-```
-
-### Vue complète
-
-```text
-             1. AS-REQ / AS-REP
-CLT01  <---------------------------->  DC01 / KDC
-  |                                      |
-  |             TGT                      |
-  |                                      |
-  |        2. TGS-REQ / TGS-REP          |
-  |        HTTP/web.novacorp.local       |
-  |<------------------------------------>|
-  |
-  | 3. HTTPS + ticket de service
-  +----------------------------------------------> SRV01 / IIS
-                                                   |
-                                                   | AppPool
-                                                   v
-                                            NOVACORP\gmsa-demo$
-```
+1. Pourquoi Windows Authentication peut-elle fonctionner même si Kerberos échoue ?
+2. Que signifie `Negotiate` ?
+3. Pourquoi NTLM peut-il masquer une mauvaise configuration Kerberos ?
+4. Quel est le lien entre le gMSA, le SPN et l'Application Pool ?
+5. Pourquoi l'accès avec un alias DNS différent peut-il modifier le comportement Kerberos ?
 
 ---
 
-# 6. SPN — l'identité Kerberos du service
+# Mission 6 — Navigateur et zone Intranet local
 
-Un **Service Principal Name** associe un nom de service à l'identité AD qui exécute ce service.
-
-Dans ce lab :
-
-```text
-Service demandé : HTTP/web.novacorp.local
-Identité IIS     : NOVACORP\gmsa-demo$
-```
-
-Vérifiez d'abord l'existence du SPN :
-
-```powershell
-setspn -Q HTTP/web.novacorp.local
-```
-
-Puis enregistrez-le sur le gMSA si nécessaire :
-
-```powershell
-setspn -S HTTP/web.novacorp.local NOVACORP\gmsa-demo$
-```
-
-Vérifiez :
-
-```powershell
-setspn -L NOVACORP\gmsa-demo$
-```
-
-Utilisez `-S`, pas `-A`, car `-S` recherche les doublons avant l'ajout.
-
-## Pourquoi un doublon est dangereux ?
-
-Kerberos doit savoir **quel compte possède le service**. Si le même SPN existe sur plusieurs objets AD, l'identité cible devient ambiguë et l'authentification Kerberos peut échouer.
-
-Recherche globale de doublons :
-
-```powershell
-setspn -X
-```
-
----
-
-# 7. Authentification Windows dans IIS
-
-Sur `NovaCorp-Web` :
-
-```text
-Anonymous Authentication → Disabled
-Windows Authentication   → Enabled
-```
-
-Dans les providers de Windows Authentication :
-
-```text
-1. Negotiate
-2. NTLM
-```
-
-`Negotiate` doit être placé avant `NTLM` : il permet d'utiliser Kerberos lorsque les conditions sont réunies, avec NTLM comme mécanisme de repli possible.
-
-Dans l'éditeur de configuration IIS :
-
-```text
-system.webServer/security/authentication/windowsAuthentication
-```
-
-Paramètres du lab :
-
-```text
-enabled               = True
-useKernelMode          = True
-useAppPoolCredentials  = True
-```
-
-Dans cette architecture, `HTTP/web.novacorp.local` est porté par le gMSA de l'Application Pool. `useAppPoolCredentials` permet à IIS d'utiliser cette identité pour l'authentification Kerberos au lieu de s'appuyer uniquement sur l'identité machine.
-
-> Ne confondez pas **l'utilisateur authentifié** (`NOVACORP\\alice...`) et **l'identité qui exécute le worker process IIS** (`NOVACORP\\gmsa-demo$`).
-
----
-
-# 8. Navigateur et zone Intranet local
-
-Lors du TP, Edge demandait les credentials Windows alors que l'utilisateur était déjà connecté au domaine.
-
-Le site n'était pas considéré comme appartenant à la zone **Intranet local** permettant l'envoi automatique de l'identité Windows selon la configuration du poste.
-
-Sur `CLT01` :
-
-```text
-inetcpl.cpl
-→ Sécurité
-→ Intranet local
-→ Sites
-→ Avancé
-→ ajouter https://web.novacorp.local
-```
-
-Relancez Edge et retestez.
-
-Résultat observé dans le lab :
-
-```text
-Avant  → demande interactive d'identifiants
-Après  → accès SSO sans nouvelle saisie
-```
-
-## Attention
-
-Cela prouve que **l'authentification Windows intégrée fonctionne**.
-
-Cela ne prouve **pas** que Kerberos est utilisé : `Negotiate` peut, selon le contexte, utiliser NTLM.
-
----
-
-# 9. Prouver Kerberos — validation encore à finaliser
-
-> **État du lab : SSO validé, preuve explicite Kerberos à finaliser.**
-
-Depuis `CLT01`, connecté avec un utilisateur du domaine :
-
-```powershell
-whoami
-klist
-```
-
-Vous pouvez purger les tickets du contexte utilisateur avant un test contrôlé :
-
-```powershell
-klist purge
-```
-
-Puis demandez explicitement le ticket du service :
-
-```powershell
-klist get HTTP/web.novacorp.local
-```
-
-Accédez ensuite au site :
+Un utilisateur connecté au domaine accède à :
 
 ```text
 https://web.novacorp.local
 ```
 
-Puis :
+mais Edge lui demande ses identifiants.
 
-```powershell
-klist
+Analysez le rôle des zones de sécurité Windows / navigateur dans l'authentification intégrée.
+
+Votre objectif est d'obtenir :
+
+```text
+Utilisateur connecté au domaine
+        ↓
+navigation vers web.novacorp.local
+        ↓
+identité Windows envoyée automatiquement
+        ↓
+aucune nouvelle saisie de mot de passe
 ```
 
-Vous devez rechercher un ticket :
+## Questions
+
+1. Pourquoi un site fonctionnel peut-il tout de même provoquer une popup d'authentification ?
+2. Quelle différence entre “le serveur accepte Kerberos” et “le navigateur envoie automatiquement les credentials” ?
+3. Pourquoi l'ajout du site à la zone Intranet local peut-il modifier le comportement ?
+4. Est-ce une preuve de Kerberos ? Pourquoi ?
+
+---
+
+# Mission 7 — Prouver Kerberos
+
+Le SSO sans mot de passe fonctionne désormais.
+
+Vous devez maintenant prouver que le mécanisme utilisé est bien Kerberos et non un fallback NTLM.
+
+Votre preuve doit inclure au minimum deux angles parmi :
+
+- ticket de service présent sur `CLT01` ;
+- vérification du SPN ;
+- événement d'authentification côté serveur ;
+- autre preuve technique pertinente et expliquée.
+
+Le ticket recherché doit correspondre au service :
 
 ```text
 HTTP/web.novacorp.local
 ```
 
-Complétez par les événements de sécurité sur `SRV01` si l'audit correspondant est activé. Pour une connexion réussie, inspectez notamment l'événement **4624** et le champ du package d'authentification.
+## Critère important
 
-## Critère de validation
+```text
+Pas de popup
+≠
+preuve Kerberos
+```
 
-Ne validez pas “Kerberos fonctionne” uniquement parce que :
+## Questions
 
-- la page s'ouvre sans mot de passe ;
-- `AUTH_TYPE` affiche une authentification Windows ;
-- le navigateur affiche le site correctement.
-
-Une preuve Kerberos doit identifier explicitement un ticket / package Kerberos.
+1. Quelle preuve considérez-vous comme la plus forte ?
+2. Que signifie l'absence de ticket HTTP côté client ?
+3. Quel résultat indiquerait un fallback NTLM ?
+4. Pourquoi purger les tickets peut-il être utile pendant un diagnostic ?
 
 ---
 
-# 10. Intranet dynamique Classic ASP
+# Mission 8 — Personnaliser l'intranet
 
-Le fichier fourni dans :
+Le fichier suivant est fourni :
 
 ```text
 resources/index.asp
 ```
 
-affiche :
+Déployez-le afin d'afficher au minimum :
 
-- l'utilisateur Windows authentifié ;
-- la valeur IIS `AUTH_TYPE` ;
-- le serveur Web ;
+- l'utilisateur AD authentifié ;
+- le type d'authentification exposé par IIS ;
+- le serveur ;
 - la date et l'heure du serveur.
 
-Installez Classic ASP :
+Vous devez déterminer :
 
-```powershell
-Install-WindowsFeature Web-ASP
-```
+- quel composant IIS supplémentaire est nécessaire ;
+- comment faire de `index.asp` le document par défaut ;
+- comment vérifier que la page s'exécute réellement côté serveur.
 
-Copiez le fichier dans :
+## Attention
 
-```text
-C:\inetpub\NovaCorp-Web\index.asp
-```
-
-Ajoutez `index.asp` comme document par défaut et placez-le avant `index.html`, ou supprimez l'ancien fichier de démonstration si votre consigne le permet.
-
-## Validation attendue
-
-La page doit afficher l'identité de l'utilisateur authentifié, par exemple :
+La variable IIS :
 
 ```text
-NOVACORP\alice.it
+AUTH_TYPE
 ```
 
-et une valeur d'authentification IIS cohérente.
+peut aider à comprendre le contexte d'authentification mais **ne suffit pas à prouver à elle seule Kerberos**.
 
-> **État du lab : page fournie mais validation d'exécution encore à réaliser.**
+## État du lab de référence
 
-`AUTH_TYPE` ne suffit pas à distinguer Kerberos de NTLM. Utilisez les contrôles de la section précédente pour la preuve protocolaire.
+Cette partie doit encore être validée expérimentalement.
 
 ---
 
-# 11. Troubleshooting guidé
+# Mission 9 — Troubleshooting
 
-Travaillez les incidents détaillés dans :
+Le formateur peut introduire un ou plusieurs incidents :
+
+- SPN absent ;
+- SPN dupliqué ;
+- DNS incorrect ;
+- fallback NTLM ;
+- site non classé en Intranet local.
+
+Pour chaque incident, appliquez :
+
+```text
+SYMPTÔME
+   ↓
+HYPOTHÈSES
+   ↓
+PREUVES
+   ↓
+CAUSE
+   ↓
+CORRECTION
+   ↓
+RETEST
+```
+
+Consultez :
 
 ```text
 troubleshooting.md
 ```
 
-Scénarios :
-
-1. SPN absent ;
-2. SPN dupliqué ;
-3. DNS incorrect ;
-4. fallback NTLM ;
-5. site absent de la zone Intranet local.
-
-Pour chaque panne, appliquez la méthode :
-
-```text
-SYMPTÔME
-  ↓
-HYPOTHÈSES
-  ↓
-PREUVES
-  ↓
-CAUSE
-  ↓
-CORRECTION
-  ↓
-VALIDATION
-```
-
-Ne corrigez pas avant d'avoir produit au moins une preuve technique.
+Ne modifiez pas plusieurs paramètres simultanément sans savoir lequel corrige le problème.
 
 ---
 
-# 12. Questions pédagogiques
+# Boîte à outils de diagnostic
 
-1. Quelle différence entre TLS et Kerberos ?
-2. Pourquoi le certificat doit-il contenir `web.novacorp.local` dans ses SAN ?
-3. Quel rôle joue le KDC ?
-4. Quelle différence entre un TGT et un ticket de service ?
-5. À quoi sert le SPN `HTTP/web.novacorp.local` ?
-6. Pourquoi le SPN est-il enregistré sur `gmsa-demo$` dans notre architecture ?
-7. Quelle différence entre l'utilisateur authentifié et l'identité de l'Application Pool ?
-8. Pourquoi `Negotiate` n'est-il pas une preuve de Kerberos ?
-9. Pourquoi la zone Intranet local peut-elle modifier le comportement SSO du navigateur ?
-10. Pourquoi `AUTH_TYPE` ne permet-il pas de conclure à Kerberos ?
-11. Quel problème un SPN dupliqué peut-il provoquer ?
-12. Que protège HTTPS si l'utilisateur est authentifié par Kerberos ?
-13. Un gMSA apporte-t-il du MFA ? Expliquez.
-14. Pourquoi une page HTTPS fonctionnelle n'est-elle pas une preuve que l'architecture est correctement sécurisée ?
+Ces commandes sont volontairement fournies comme **outils d'observation**, pas comme procédure d'installation.
 
-La correction formateur est fournie séparément dans `correction-formateur.md`.
+## DNS / réseau
+
+```powershell
+Resolve-DnsName web.novacorp.local
+Test-NetConnection web.novacorp.local -Port 443
+ipconfig /all
+```
+
+## IIS
+
+```powershell
+Get-Website
+Get-WebBinding
+Get-WebAppPoolState
+```
+
+## Certificats
+
+```powershell
+Get-ChildItem Cert:\LocalMachine\My
+```
+
+## gMSA
+
+```powershell
+Test-ADServiceAccount gmsa-demo
+```
+
+## SPN
+
+```text
+setspn -Q <SPN>
+setspn -L <compte>
+setspn -X
+```
+
+## Kerberos
+
+```text
+klist
+klist purge
+klist get <SPN>
+```
+
+## Identité
+
+```text
+whoami
+whoami /groups
+```
+
+## Logs
+
+Utilisez :
+
+- Event Viewer ;
+- journaux Security ;
+- journaux IIS ;
+- événements Kerberos / authentification pertinents.
 
 ---
 
 # Livrables
 
-- `iis-design.md`
-- `tls-validation.md`
-- `troubleshooting.md`
-- preuves dans `evidence/`
+Vous devez compléter :
 
-Le fichier `resources/index.asp` est fourni comme ressource de laboratoire.
+```text
+iis-design.md
+tls-validation.md
+evidence/
+```
+
+et fournir votre propre documentation technique de mise en œuvre.
+
+## `iis-design.md`
+
+Doit expliquer :
+
+- architecture IIS ;
+- choix du FQDN ;
+- Application Pool ;
+- gMSA ;
+- droits NTFS ;
+- modèle d'authentification ;
+- SPN ;
+- relation entre identité du service et utilisateur authentifié.
+
+## `tls-validation.md`
+
+Doit contenir :
+
+- DNS ;
+- validation TLS ;
+- chaîne de confiance ;
+- binding HTTPS ;
+- SSO Windows ;
+- preuve Kerberos ;
+- résultat de `index.asp`.
 
 ---
 
-# Validation M10
+# Validation du module
+
+Le M10 est terminé uniquement si vous pouvez démontrer :
 
 ```text
-[ ] DNS web.novacorp.local correct
-[ ] IIS et NovaCorp-Web fonctionnels
-[ ] certificat web.novacorp.local valide
-[ ] HTTPS sans avertissement depuis CLT01
-[ ] NovaCorp-AppPool utilise gmsa-demo$
-[ ] Test-ADServiceAccount = True
-[ ] Anonymous Authentication désactivée
-[ ] Windows Authentication activée
-[ ] Negotiate placé avant NTLM
-[ ] SPN HTTP/web.novacorp.local unique et porté par gmsa-demo$
-[ ] SSO navigateur sans saisie de credentials
-[ ] ticket HTTP/web.novacorp.local explicitement observé OU autre preuve Kerberos équivalente
-[ ] index.asp affiche l'utilisateur AD attendu
-[ ] AUTH_TYPE interprété sans le confondre avec la preuve Kerberos
-[ ] au moins un scénario de troubleshooting diagnostiqué avec preuves
+[ ] web.novacorp.local résout correctement
+[ ] le site IIS fonctionne
+[ ] HTTPS fonctionne sans avertissement
+[ ] le certificat correspond au FQDN
+[ ] l'Application Pool utilise le gMSA
+[ ] les droits NTFS sont minimaux et justifiés
+[ ] Windows Authentication fonctionne
+[ ] le SSO navigateur fonctionne
+[ ] le SPN HTTP est unique et porté par la bonne identité
+[ ] un ticket HTTP est observé ou une preuve Kerberos équivalente est fournie
+[ ] Kerberos est distingué explicitement de NTLM
+[ ] index.asp affiche l'utilisateur AD
+[ ] une panne Kerberos peut être diagnostiquée méthodiquement
 ```
-
-## État actuel du lab de référence
-
-```text
-IIS / HTTP               ✅ validé
-TLS / HTTPS              ✅ validé
-Certificat PKI           ✅ validé
-Application Pool gMSA    ✅ validé
-SSO Windows              ✅ validé
-Preuve Kerberos          ⏳ à finaliser
-Page index.asp            ⏳ à tester
-```
-
-Ne marquez pas M10 comme complètement terminé avant validation des deux derniers points.
 
 ---
 
-# Checkpoint CP10
+# Questions de restitution
 
-Le groupe doit pouvoir expliquer et démontrer :
+Préparez une réponse courte aux questions suivantes :
+
+1. Pourquoi TLS, Kerberos et gMSA sont-ils complémentaires ?
+2. Pourquoi le certificat et le SPN utilisent-ils tous les deux `web.novacorp.local` mais pour des usages différents ?
+3. Pourquoi un site accessible sans popup de credentials peut-il encore utiliser NTLM ?
+4. Pourquoi le SPN est-il porté par une identité de service ?
+5. Que se passerait-il si le SPN HTTP était enregistré sur deux objets AD ?
+6. Quel est le rôle exact de la zone Intranet local ?
+7. Quelle preuve utilisez-vous pour affirmer : **“Kerberos fonctionne”** ?
+
+---
+
+# Checkpoint M10
 
 ```text
-DNS
- ↓
-TLS / PKI
- ↓
-IIS
- ↓
-gMSA
- ↓
-SPN
- ↓
-Kerberos / Windows Authentication
- ↓
-SSO navigateur
- ↓
-preuve technique
+IIS fonctionnel
++
+TLS valide
++
+gMSA opérationnel
++
+SSO Windows fonctionnel
++
+Kerberos prouvé
++
+troubleshooting maîtrisé
 ```
 
-La réussite du module dépend autant de la **preuve du protocole réellement utilisé** que du fait que la page Web s'affiche.
+Snapshot recommandé :
+
+```text
+M10-IIS-TLS-KERBEROS-OK
+```

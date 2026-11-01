@@ -1,109 +1,107 @@
-# IIS NovaCorp — Design
+# M10 — IIS Design
 
-## FQDN
+> Document à compléter par le groupe. Ne recopiez pas simplement la configuration finale : justifiez vos choix.
+
+## 1. Architecture
+
+Dessinez le flux :
 
 ```text
+CLT01
+  ↓
 web.novacorp.local
+  ↓
+SRV01 / IIS
+  ↓
+Application Pool
+  ↓
+gMSA
 ```
 
-## Serveur
+Ajoutez les interactions avec :
 
-```text
-SRV01
-```
+- DNS ;
+- PKI ;
+- KDC ;
+- Active Directory.
 
-## DNS
+---
 
-| Élément | Valeur |
-|---|---|
-| Nom | `web.novacorp.local` |
-| Cible | SRV01 |
-| Validation | `Resolve-DnsName web.novacorp.local` |
+## 2. Identité du site
 
-## Site IIS
+- FQDN retenu :
+- justification :
+- enregistrement DNS :
+- méthode de validation :
 
-```text
-Nom            : NovaCorp-Web
-Répertoire     : C:\inetpub\NovaCorp-Web
-HTTP           : 80 / Host Header web.novacorp.local
-HTTPS          : 443 / SNI web.novacorp.local
-```
+---
 
-## Application Pool
+## 3. Site IIS
 
-```text
-NovaCorp-AppPool
-```
+- nom :
+- chemin physique :
+- bindings :
+- Application Pool :
+- composants IIS installés :
+- justification :
 
-Identité :
+---
 
-```text
-NOVACORP\gmsa-demo$
-```
+## 4. Identité du processus
 
-Validation gMSA :
+- identité du pool :
+- pourquoi un gMSA ?
+- droits NTFS nécessaires :
+- droits volontairement non accordés :
+- preuve de fonctionnement :
 
-```powershell
-Test-ADServiceAccount gmsa-demo
-```
+---
 
-## Authentification
+## 5. Authentification utilisateur
 
-```text
-Anonymous Authentication : Disabled
-Windows Authentication   : Enabled
-Providers                 : Negotiate, NTLM
-useKernelMode             : True
-useAppPoolCredentials     : True
-```
+- méthode :
+- Anonymous :
+- Windows Authentication :
+- providers :
+- raison du choix :
 
-## SPN
+---
 
-```text
-HTTP/web.novacorp.local
-```
+## 6. Kerberos
 
-Porté dans le lab par :
+- SPN attendu :
+- objet AD qui le porte :
+- justification :
+- méthode de vérification d'unicité :
+- preuve côté client :
+- preuve côté serveur :
 
-```text
-NOVACORP\gmsa-demo$
-```
+---
 
-Contrôles :
+## 7. Navigateur
 
-```powershell
-setspn -Q HTTP/web.novacorp.local
-setspn -L NOVACORP\gmsa-demo$
-setspn -X
-```
+- comportement initial :
+- zone de sécurité :
+- modification réalisée :
+- justification :
+- impact sur l'envoi automatique des credentials :
 
-## Certificat
+---
 
-- Subject / SAN : `web.novacorp.local`
-- Issuer : PKI NovaCorp
-- EKU : Server Authentication
-- Private Key : présente sur SRV01
+## 8. Différences à maîtriser
 
-## Mesures de sécurité
+Expliquez en quelques phrases :
 
-- TLS obligatoire pour l'accès final ;
-- certificat correspondant au FQDN réellement utilisé ;
-- identité gMSA sans mot de passe géré manuellement ;
-- droits NTFS minimaux (`RX`) sur le contenu Web ;
-- authentification anonyme désactivée ;
-- Windows Authentication activée ;
-- SPN unique ;
-- Kerberos prouvé explicitement, pas supposé ;
-- logs IIS et événements Windows conservés comme preuves ;
-- configuration navigateur documentée pour l'Intranet local.
+### TLS vs Kerberos
 
-## État du lab de référence
+### Utilisateur authentifié vs identité AppPool
 
-| Élément | État |
-|---|---|
-| IIS / site | ✅ |
-| HTTPS / PKI | ✅ |
-| AppPool gMSA | ✅ |
-| SSO Windows | ✅ |
-| Kerberos explicitement prouvé | ⏳ |
-| `index.asp` validé | ⏳ |
+### Kerberos vs NTLM
+
+### SSO vs MFA
+
+---
+
+## 9. Risques / limites
+
+Identifiez au moins trois risques ou limites de l'architecture et proposez une mesure pour chacun.

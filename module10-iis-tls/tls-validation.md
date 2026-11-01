@@ -1,148 +1,133 @@
-# TLS / Kerberos Validation
+# M10 — Validation IIS / TLS / Kerberos
 
-## URL
+## URL testée
 
 ```text
 https://web.novacorp.local
 ```
 
-## DNS
+---
 
-```powershell
-Resolve-DnsName web.novacorp.local
-Test-NetConnection web.novacorp.local -Port 443
-```
+## 1. DNS / connectivité
 
-Résultat :
+- IP obtenue :
+- serveur attendu :
+- port 443 accessible :
+- preuve conservée :
 
-```text
-À renseigner
-```
+### Conclusion
 
-## Certificat
+---
+
+## 2. TLS
 
 - Subject :
-- SAN : `web.novacorp.local`
+- SAN :
 - Issuer :
-- Expiration :
-- EKU Server Authentication :
-- HasPrivateKey sur SRV01 :
+- expiration :
+- EKU :
+- clé privée disponible côté serveur :
+- chaîne de confiance valide côté client :
 
-Commande :
+### Conclusion
 
-```powershell
-Get-ChildItem Cert:\LocalMachine\My |
-  Select Subject,Issuer,NotAfter,HasPrivateKey,Thumbprint
-```
+Expliquez pourquoi le certificat est valide pour **ce FQDN précis**.
 
-## Binding IIS
+---
 
-```powershell
-Get-WebBinding -Name "NovaCorp-Web"
-netsh http show sslcert
-```
+## 3. IIS
 
-- HTTPS / 443 :
-- Hostname : `web.novacorp.local`
+- site démarré :
+- binding HTTPS :
 - SNI :
-- Certificat attendu :
+- Application Pool :
+- identité du pool :
+- site accessible :
 
-## Confiance client
+### Conclusion
 
-Depuis `CLT01` :
+---
 
-- navigateur sans avertissement :
-- chaîne vers NovaCorp Root CA :
+## 4. gMSA
 
-## Authentification Windows
+- compte utilisé :
+- hôte autorisé :
+- preuve que SRV01 peut utiliser le gMSA :
+- droits NTFS accordés :
+- justification :
 
-```text
-Anonymous : Disabled
-Windows   : Enabled
-Providers : Negotiate puis NTLM
-```
+---
 
-Zone navigateur :
+## 5. SSO Windows
 
-```text
-https://web.novacorp.local → Intranet local
-```
+- Anonymous Authentication :
+- Windows Authentication :
+- providers :
+- comportement navigateur avant configuration Intranet :
+- comportement après :
+- utilisateur connecté :
 
-SSO sans nouvelle saisie de mot de passe :
+### Conclusion
 
-```text
-✅ validé dans le lab de référence
-```
+Expliquez pourquoi l'absence de popup ne prouve pas Kerberos.
 
-## Validation Kerberos
+---
 
-> À finaliser explicitement dans le lab de référence.
+## 6. Validation Kerberos
 
-Depuis `CLT01` :
+> Cette partie doit être prouvée explicitement.
 
-```powershell
-whoami
-klist purge
-klist get HTTP/web.novacorp.local
-klist
-```
-
-Preuve recherchée :
-
-```text
-Ticket de service : HTTP/web.novacorp.local
-```
-
-Contrôle serveur complémentaire si l'audit est disponible :
-
-```text
-Security Event ID 4624
-Authentication Package / mécanisme à examiner
-```
+- SPN attendu :
+- objet AD portant le SPN :
+- doublon détecté : oui / non
+- ticket HTTP côté client : oui / non
+- preuve serveur complémentaire :
+- NTLM observé : oui / non
 
 ### Conclusion protocolaire
 
-- SSO Windows : ✅ / ❌
-- ticket HTTP présent : ✅ / ❌
-- preuve Kerberos explicite : ✅ / ❌
-- fallback NTLM constaté : ✅ / ❌
-
-## Page Classic ASP
-
-Fichier :
-
 ```text
-resources/index.asp
+Kerberos prouvé : OUI / NON
 ```
 
-Validation attendue :
+Justification :
 
-- `LOGON_USER` affiche le bon utilisateur AD ;
-- `AUTH_TYPE` est visible ;
-- serveur et heure affichés ;
-- la page ne doit pas être utilisée seule comme preuve de Kerberos.
+---
 
-État :
+## 7. Classic ASP
 
-```text
-⏳ à tester dans le lab de référence
-```
+- `index.asp` exécuté :
+- utilisateur AD affiché :
+- type d'authentification affiché :
+- serveur affiché :
+- heure serveur affichée :
+- erreur éventuelle :
 
-## Logs IIS
+### Conclusion
 
-- fichier / chemin :
-- requête retrouvée :
-- heure :
-- utilisateur :
-- code HTTP :
+Expliquez pourquoi `AUTH_TYPE` ne suffit pas à prouver Kerberos.
 
-## Conclusion
+---
 
-Décrire séparément :
+## 8. Troubleshooting
 
-1. validation DNS ;
-2. validation TLS ;
-3. identité AppPool ;
-4. validation SSO Windows ;
-5. preuve Kerberos ;
-6. fonctionnement de `index.asp`.
+Incident traité :
+
+- symptôme :
+- hypothèses :
+- preuves collectées :
+- cause :
+- correction :
+- validation :
+
+---
+
+## Conclusion générale
+
+Répondez en quelques lignes :
+
+1. Qu'est-ce qui prouve TLS ?
+2. Qu'est-ce qui prouve le SSO ?
+3. Qu'est-ce qui prouve Kerberos ?
+4. Quel rôle joue le gMSA ?
+5. Quelle dépendance vous paraît la plus critique dans cette architecture ?
