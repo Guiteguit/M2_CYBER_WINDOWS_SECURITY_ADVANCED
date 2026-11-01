@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    <section name="system.identityModel"
+      type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
+    <section name="system.identityModel.services"
+      type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
+  </configSections>
+
+  <system.web>
+    <compilation debug="true" targetFramework="4.8" />
+    <httpRuntime targetFramework="4.8" />
+    <authentication mode="None" />
+    <authorization>
+      <deny users="?" />
+    </authorization>
+    <globalization requestEncoding="utf-8" responseEncoding="utf-8" fileEncoding="utf-8" />
+
+    <httpModules>
+      <add name="WSFederationAuthenticationModule"
+        type="System.IdentityModel.Services.WSFederationAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
+      <add name="SessionAuthenticationModule"
+        type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
+    </httpModules>
+  </system.web>
+
+  <system.webServer>
+    <validation validateIntegratedModeConfiguration="false" />
+    <modules>
+      <add name="WSFederationAuthenticationModule"
+        type="System.IdentityModel.Services.WSFederationAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089"
+        preCondition="managedHandler" />
+      <add name="SessionAuthenticationModule"
+        type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089"
+        preCondition="managedHandler" />
+    </modules>
+  </system.webServer>
+
+  <system.identityModel>
+    <identityConfiguration saveBootstrapContext="true">
+      <audienceUris>
+        <add value="https://claims.novacorp.local/" />
+      </audienceUris>
+      <issuerNameRegistry
+        type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089">
+        <trustedIssuers>
+          <add thumbprint="REPLACE_WITH_ADFS_TOKEN_SIGNING_THUMBPRINT" name="NovaCorp AD FS" />
+        </trustedIssuers>
+      </issuerNameRegistry>
+    </identityConfiguration>
+  </system.identityModel>
+
+  <system.identityModel.services>
+    <federationConfiguration>
+      <cookieHandler requireSsl="true" />
+      <wsFederation
+        passiveRedirectEnabled="true"
+        issuer="https://fs.novacorp.local/adfs/ls/"
+        realm="https://claims.novacorp.local/"
+        requireHttps="true" />
+    </federationConfiguration>
+  </system.identityModel.services>
+</configuration>
