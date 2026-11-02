@@ -6,11 +6,21 @@
 
 - d'une gestion sécurisée des administrateurs locaux avec Windows LAPS ;
 - de comptes de service gérés avec gMSA ;
-- d'une PKI interne fonctionnelle ;
+- d'une PKI interne fonctionnelle hébergée sur un serveur `PKI01` dédié ;
 - d'un intranet IIS publié en HTTPS avec authentification Windows ;
 - d'une compréhension du flux Kerberos ;
 - d'un POC de fédération AD FS avec une Relying Party ;
 - d'un positionnement clair de MFA et Entra ID.
+
+## Architecture spécifique du Jour 3
+
+- `DC01` : AD DS / DNS / KDC
+- `SRV01` : services applicatifs / IIS
+- `PKI01` : AD CS / CA NovaCorp
+- `ADFS01` : AD FS pour M11
+- `CLT01` : poste client
+
+AD CS ne doit pas être mutualisé avec `SRV01` ou `ADFS01` dans le parcours de référence.
 
 ## Règles de travail
 
