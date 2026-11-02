@@ -521,3 +521,10 @@ analyse PAM terminée
 Ne poursuivez pas uniquement parce que les commandes ont fonctionné.
 
 Vous devez être capables d'expliquer **pourquoi l'architecture construite est plus sûre que la situation initiale**.
+
+
+Snapshot conseillé :
+
+```text
+M08-GMSA-PAM-OK
+```
