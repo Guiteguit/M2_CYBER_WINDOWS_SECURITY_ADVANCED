@@ -47,7 +47,7 @@ L'objectif n'est pas uniquement d'obtenir un cadenas dans le navigateur.
 
 # 1. Concevoir la PKI
 
-Pour le laboratoire, une CA Enterprise Root simple est acceptable.
+Pour le laboratoire, une CA Enterprise Root simple est acceptable et doit être installée sur le serveur dédié `PKI01`.
 
 Expliquez pourquoi une architecture de production peut séparer :
 
@@ -57,7 +57,15 @@ Expliquez pourquoi une architecture de production peut séparer :
       ↓
     certificats finaux
 
-Documentez le nom de la CA, le serveur, la durée de vie, les services consommateurs et le modèle de confiance.
+Documentez le nom de la CA, le serveur `PKI01`, la durée de vie, les services consommateurs et le modèle de confiance.
+
+Contraintes d'architecture :
+
+- `PKI01` est membre du domaine ;
+- `PKI01` utilise une adresse IP statique ;
+- AD CS n'est pas installé sur `DC01` ;
+- AD CS n'est pas installé sur `SRV01` ;
+- les clés privées de la CA restent sur `PKI01`.
 
 # 2. Comprendre un certificat
 
