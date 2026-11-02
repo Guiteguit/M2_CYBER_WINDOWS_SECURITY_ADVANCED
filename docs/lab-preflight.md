@@ -16,11 +16,27 @@ Avant de tester les 16 modules, valider le socle.
 - [ ] SRV01 — Windows Server
 - [ ] CLT01 — Windows 11
 
-VMs / rôles supplémentaires à prévoir ensuite :
+VMs supplémentaires à prévoir :
 
-- [ ] PKI01 ou rôle AD CS disponible
-- [ ] SEC01 Linux pour Wazuh
-- [ ] VULN01 Linux pour Greenbone/OpenVAS
+- [ ] PKI01 — Windows Server dédié à AD CS
+- [ ] ADFS01 — Windows Server dédié à AD FS pour M11
+- [ ] SEC01 — Linux pour Wazuh
+- [ ] VULN01 — Linux pour Greenbone/OpenVAS
+
+## Dimensionnement de référence
+
+| VM | vCPU | RAM | Disque |
+|---|---:|---:|---:|
+| DC01 | 2 | 4 Go | 60 Go |
+| SRV01 | 2 | 4–6 Go | 60–80 Go |
+| PKI01 | 2 | 4 Go | 60 Go |
+| ADFS01 | 2 | 4–6 Go | 60 Go |
+| CLT01 | 2 | 4–6 Go | 64 Go |
+| CLT02 | 2 | 4 Go | 64 Go |
+| SEC01 | 4 | 8 Go minimum | 100 Go |
+| VULN01 | 4 | 8 Go minimum | 100 Go |
+
+Ces valeurs sont destinées au laboratoire. Wazuh et Greenbone sont les deux briques les plus consommatrices.
 
 ## Jour 1
 
