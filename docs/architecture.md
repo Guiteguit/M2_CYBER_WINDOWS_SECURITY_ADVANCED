@@ -1,20 +1,23 @@
 # Architecture NovaCorp
 
-Ce document servira de référence pour décrire l'évolution de l'architecture du laboratoire.
+Ce document sert de référence pour décrire l'évolution de l'architecture du laboratoire.
 
 ## Convention de nommage
 
-Les groupes doivent utiliser les noms suivants :
+Les rôles principaux utilisent les noms suivants :
 
-- `DC01`
-- `SRV01`
-- `CLT01`
-- `CLT02` si nécessaire
-- `PKI01`
-- `SEC01`
-- `VULN01`
+- `DC01` — Active Directory / DNS
+- `SRV01` — serveur membre et services
+- `CLT01` — poste Windows
+- `CLT02` — second poste si nécessaire
+- `PKI01` — CA dédiée lorsque les ressources le permettent
+- `ADFS01` — AD FS pour le POC M11
+- `SEC01` — Wazuh
+- `VULN01` — Greenbone / OpenVAS
 
-Les noms pourront évoluer uniquement si cela est justifié et validé avec le formateur.
+Dans un lab contraint, certains rôles peuvent être mutualisés, par exemple AD CS sur `SRV01`.
+
+Toute mutualisation doit être documentée avec ses compromis.
 
 ## Réseaux
 
@@ -29,3 +32,14 @@ Exemple :
 | Groupe 3 | `10.10.30.0/24` |
 
 Le plan d'adressage exact est défini par chaque groupe puis documenté.
+
+## Lab de référence du formateur
+
+L'architecture peut notamment contenir :
+
+    DC01    → AD DS / DNS
+    SRV01   → services / IIS / PKI selon contraintes
+    ADFS01  → AD FS
+    CLT01   → poste Windows
+
+Les adresses IP exactes ne sont pas imposées aux groupes.
