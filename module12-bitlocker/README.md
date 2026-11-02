@@ -1,5 +1,15 @@
 # Module 12 — BitLocker, TPM et récupération
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | stockage AD DS de la recovery | 2 | 4 Go | 60 Go |
+| CLT01 | poste Windows 11 + vTPM | 2 | 4–6 Go | 64 Go |
+
+**Attention stockage hyperviseur :** BitLocker peut faire grossir fortement les disques thin-provisioned et les snapshots. Vérifiez l'espace disponible avant toute conversion réelle.
+
+
 ## Contexte NovaCorp
 
 NovaCorp souhaite protéger les données stockées sur les postes utilisateurs, en particulier en cas de perte, de vol ou d'accès physique au support.
