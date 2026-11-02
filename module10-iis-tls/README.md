@@ -57,6 +57,7 @@ Ces trois mécanismes répondent à des problèmes différents.
 |---|---|
 | Domaine | `novacorp.local` |
 | DC / DNS / KDC | `DC01` |
+| Autorité de certification | `PKI01` |
 | Serveur IIS | `SRV01` |
 | Client domaine | `CLT01` |
 | Site | `NovaCorp-Web` |
@@ -153,7 +154,7 @@ Contraintes :
 
 # Mission 2 — Passer de HTTP à HTTPS
 
-Réutilisez le certificat délivré au M09 pour sécuriser :
+Réutilisez le certificat délivré par la CA NovaCorp hébergée sur `PKI01` au M09 pour sécuriser :
 
 ```text
 https://web.novacorp.local
