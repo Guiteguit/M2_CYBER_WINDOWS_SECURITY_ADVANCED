@@ -5,7 +5,7 @@
 À la fin du Jour 4, NovaCorp doit disposer :
 
 - d'une stratégie BitLocker comprise et, lorsque le lab le permet, validée ;
-- d'un endpoint durci ;
+- d'un endpoint durci et testé en Audit / Enforcement ;
 - d'une administration distante sécurisée ;
 - d'une télémétrie Windows centralisée ;
 - d'un premier processus de vulnerability management.
@@ -18,11 +18,12 @@
 - Les preuves doivent être conservées sans exposer de secrets.
 - Les outils doivent être compris, pas simplement installés.
 - Une contrainte de virtualisation peut conduire à documenter un résultat attendu plutôt qu'à provoquer une panne du lab.
+- Une protection bloquante doit être testée de manière contrôlée et disposer d'un rollback.
 
 ## Checkpoints
 
-- M12 : BitLocker / TPM / Recovery compris ou validés
-- M13 : endpoint durci
+- M12 : `M12-BITLOCKER-OK` — BitLocker / TPM / Recovery compris ou validés
+- M13 : `M13-ENDPOINT-SECURITY-OK` — ASR, Firewall, AppLocker et PowerShell Logging validés
 - M14 : administration distante sécurisée
 - M15 : événements Sysmon visibles dans Wazuh
 - M16 : scan Greenbone analysé et priorisé
