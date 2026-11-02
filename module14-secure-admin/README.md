@@ -10,6 +10,21 @@
 | PKI01 | certificats si WinRM HTTPS est testé | 2 | 4 Go | 60 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M06 : séparation des comptes privilégiés et délégation ;
+- M09 : certificats issus de `PKI01` si WinRM HTTPS est utilisé ;
+- M10 : Kerberos et SPN ;
+- M13 : Firewall, journalisation et logique de durcissement.
+
+**Produit pour la suite :**
+- flux d'administration distante documentés ;
+- événements RDP / WinRM / PowerShell Remoting ;
+- matrice d'accès et refus explicites.
+
+M15 pourra collecter et analyser ces événements d'administration.
+
 ## Contexte NovaCorp
 
 Les administrateurs NovaCorp doivent gérer les serveurs sans se connecter physiquement sur chaque machine.
