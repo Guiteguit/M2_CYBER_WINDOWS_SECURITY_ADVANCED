@@ -1,5 +1,14 @@
 # Module 07 — Windows LAPS
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / attributs LAPS | 2 | 4 Go | 60 Go |
+| CLT01 | poste géré par LAPS | 2 | 4–6 Go | 64 Go |
+| CLT02 | second poste pour démontrer l'unicité | 2 | 4 Go | 64 Go |
+
+
 ## Contexte NovaCorp
 
 NovaCorp utilise encore des mots de passe d'administrateur local partagés ou gérés manuellement.
