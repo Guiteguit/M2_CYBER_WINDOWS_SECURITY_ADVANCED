@@ -111,6 +111,7 @@ Repères conseillés :
 - `M10-IIS-TLS-KERBEROS-OK`
 - `M11-ADFS-FEDERATION-OK`
 - `M12-BITLOCKER-OK`
+- `M13-ENDPOINT-SECURITY-OK`
 
 Les snapshots sont des points de retour techniques, pas une preuve pédagogique à eux seuls.
 
