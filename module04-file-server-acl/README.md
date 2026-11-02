@@ -24,6 +24,18 @@ Le disque de `SRV01` peut être augmenté si vous souhaitez manipuler davantage 
 
 Ces éléments enrichissent l'audit AD de M05 et la réflexion sur les délégations de M06.
 
+## Aide technique et troubleshooting
+
+Le README reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d'implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte
 
 NovaCorp doit mettre à disposition des espaces de fichiers pour plusieurs équipes sans exposer les données sensibles aux mauvais utilisateurs.
