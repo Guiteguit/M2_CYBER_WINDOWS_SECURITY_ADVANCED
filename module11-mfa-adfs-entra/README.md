@@ -1,5 +1,18 @@
 # Module 11 — MFA, AD FS, fédération et Entra ID
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / DNS / KDC | 2 | 4 Go | 60 Go |
+| PKI01 | AD CS / émission des certificats | 2 | 4 Go | 60 Go |
+| SRV01 | IIS / NovaCorp-Claims | 2 | 4–6 Go | 60 Go |
+| ADFS01 | AD FS / WID | 2 | 4–6 Go | 60 Go |
+| CLT01 | client / validation du flux | 2 | 4–6 Go | 64 Go |
+
+Pour un poste formateur disposant de peu de RAM, les VMs non utilisées pendant une étape peuvent être arrêtées. Ne mutualisez pas AD FS et AD CS pour ce TP.
+
+
 ## Contexte NovaCorp
 
 NovaCorp utilise Active Directory Domain Services pour ses identités internes.
