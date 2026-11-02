@@ -9,6 +9,21 @@
 | SRV01 | validation de politiques serveur | 2 | 4 Go | 60 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M03 : GPO, scope, filtrage et rollback ;
+- M06 : moindre privilège ;
+- M12 : protection des données au repos sur CLT01.
+
+**Produit pour la suite :**
+- baseline Defender / ASR / Firewall ;
+- contrôle applicatif ;
+- journalisation PowerShell ;
+- tests en mode audit / enforcement.
+
+M14 réutilise notamment le Firewall et le moindre privilège. M15 réutilise directement les journaux PowerShell et les événements endpoint.
+
 ## Contexte NovaCorp
 
 NovaCorp veut réduire la surface d'attaque de ses postes et serveurs sans rendre les machines inutilisables.
