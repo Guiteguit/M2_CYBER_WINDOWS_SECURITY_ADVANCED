@@ -21,6 +21,18 @@
 
 Cette logique sera réutilisée notamment dans M07 (LAPS), M12 (BitLocker) et M13 (Endpoint Security).
 
+## Aide technique et troubleshooting
+
+Le README reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d'implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte
 
 L'Active Directory de NovaCorp fonctionne. Le RSSI demande maintenant une première politique de sécurité homogène pour les postes et serveurs.
