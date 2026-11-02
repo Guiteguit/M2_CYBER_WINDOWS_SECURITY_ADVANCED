@@ -9,6 +9,20 @@
 | CLT02 | second poste pour démontrer l'unicité | 2 | 4 Go | 64 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : AD DS, OU et machines jointes ;
+- M03 : distribution de politiques par GPO ;
+- M06 : modèle de comptes privilégiés et moindre privilège.
+
+**Produit pour la suite :**
+- mots de passe administrateur local uniques ;
+- délégation de lecture contrôlée ;
+- expérience de rotation automatique des secrets.
+
+M08 réutilise cette logique pour comparer LAPS, gMSA et PAM.
+
 ## Contexte NovaCorp
 
 NovaCorp utilise encore des mots de passe d'administrateur local partagés ou gérés manuellement.
