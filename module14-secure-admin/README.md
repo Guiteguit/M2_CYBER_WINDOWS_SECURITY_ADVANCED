@@ -1,5 +1,15 @@
 # Module 14 — Administration distante sécurisée
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | identité / Kerberos / délégation | 2 | 4 Go | 60 Go |
+| SRV01 | cible d'administration | 2 | 4–6 Go | 60 Go |
+| CLT01 | poste d'administration | 2 | 4–6 Go | 64 Go |
+| PKI01 | certificats si WinRM HTTPS est testé | 2 | 4 Go | 60 Go |
+
+
 ## Contexte NovaCorp
 
 Les administrateurs NovaCorp doivent gérer les serveurs sans se connecter physiquement sur chaque machine.
