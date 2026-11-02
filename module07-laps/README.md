@@ -1,38 +1,168 @@
 # Module 07 — Windows LAPS
 
-## Contexte
-NovaCorp utilise encore des mots de passe administrateur local partagés ou gérés manuellement.
+## Contexte NovaCorp
 
-## Mission
-Déployez Windows LAPS sur au moins deux machines et démontrez :
-- un secret différent par machine ;
-- une rotation automatique ;
-- une lecture réservée aux identités autorisées ;
-- l'absence de secret dans Git.
+NovaCorp utilise encore des mots de passe d'administrateur local partagés ou gérés manuellement.
 
-## Répartition suggérée
-- A : préparation AD
-- B : GPO / stratégie
-- C : test CLT01
-- D : audit des permissions
-- E : test CLT02 + documentation
+Ce modèle crée un risque majeur : si plusieurs machines partagent le même secret local et qu'une machine est compromise, ce secret peut être réutilisé ailleurs.
 
-## Travail demandé
-1. Concevoir la politique LAPS.
-2. Déployer sur au moins deux machines.
-3. Tester lecture autorisée et refus non autorisé.
-4. Vérifier ou provoquer une rotation.
-5. Répondre :
-   - Quel risque LAPS réduit-il ?
-   - Pourquoi LAPS ne remplace-t-il pas un PAM ?
+Windows LAPS doit permettre d'obtenir :
 
-## Livrables
-- `laps-design.md`
-- `security-review.md`
-- preuves dans `evidence/`
+    un poste
+    → un secret administrateur local unique
+    → rotation automatique
+    → stockage contrôlé dans l'annuaire
+    → lecture limitée aux identités autorisées
 
-## Checkpoint CP07
-- LAPS fonctionnel ;
-- permissions vérifiées ;
-- secrets non commités ;
-- audit croisé effectué.
+## Objectifs
+
+À la fin du module, vous devez être capables de :
+
+- expliquer le problème des mots de passe locaux partagés ;
+- distinguer Windows LAPS moderne de l'ancien Microsoft LAPS ;
+- préparer Active Directory ;
+- définir une politique LAPS ;
+- choisir le compte local géré ;
+- limiter qui peut lire les mots de passe ;
+- démontrer lecture autorisée et refus non autorisé ;
+- provoquer ou vérifier une rotation ;
+- expliquer pourquoi LAPS ne remplace pas un PAM ;
+- éviter toute fuite de secret dans Git.
+
+# Mission 1 — Modèle de menace
+
+Expliquez pourquoi ce modèle est dangereux :
+
+    CLT01 Administrateur = même mot de passe
+    CLT02 Administrateur = même mot de passe
+    SRV01 Administrateur = même mot de passe
+
+Analysez notamment le risque de mouvement latéral.
+
+# Mission 2 — Préparer AD
+
+Vérifiez que l'environnement permet l'utilisation de Windows LAPS.
+
+Vous devez comprendre :
+
+- extensions de schéma nécessaires ;
+- attributs LAPS ;
+- droits des ordinateurs pour mettre à jour leur propre secret ;
+- droits des identités autorisées à lire le secret ;
+- héritage des permissions sur les OU.
+
+Ne modifiez pas le schéma sans comprendre pourquoi.
+
+# Mission 3 — Concevoir la politique
+
+Définissez :
+
+- OU concernée ;
+- compte local à gérer ;
+- complexité ;
+- longueur ;
+- durée de vie ;
+- destination de sauvegarde ;
+- actions post-authentification si utilisées.
+
+Justifiez chaque choix.
+
+# Mission 4 — Déployer
+
+Déployez Windows LAPS sur au moins deux machines lorsque les ressources le permettent.
+
+Résultat attendu :
+
+    CLT01 → secret A
+    CLT02 → secret B
+    A != B
+
+Ne copiez jamais les valeurs réelles dans les livrables.
+
+# Mission 5 — Contrôler les droits
+
+Utilisez un groupe dédié, par exemple :
+
+    GG_LAPS_PASSWORD_READERS
+
+Démontrez :
+
+    identité autorisée
+    → lecture possible
+
+    identité non autorisée
+    → lecture refusée
+
+Une lecture qui fonctionne n'est pas suffisante si le refus n'a pas été testé.
+
+# Mission 6 — Rotation
+
+Vérifiez l'expiration du mot de passe puis observez ou provoquez une rotation contrôlée.
+
+Expliquez qui génère le nouveau secret, où il est stocké, quand l'ancien secret cesse d'être valable et pourquoi une rotation régulière limite le risque.
+
+# Boîte à outils
+
+    Get-LapsADPassword
+    Find-LapsADExtendedRights
+    Get-LapsDiagnostics
+    Reset-LapsPassword
+
+Adaptez les commandes à votre version de Windows et aux droits disponibles.
+
+# Travail distribué
+
+## Groupe de 5
+
+- A : préparation AD / schéma ;
+- B : GPO / stratégie ;
+- C : CLT01 ;
+- D : CLT02 / rotation ;
+- E : permissions / audit.
+
+## Groupe de 4
+
+- A : AD ;
+- B : politique ;
+- C : client ;
+- D : audit / permissions.
+
+# Livrables
+
+- laps-design.md
+- security-review.md
+- preuves non sensibles dans evidence/
+
+# Validation
+
+    [ ] risque des mots de passe partagés expliqué
+    [ ] stratégie LAPS conçue
+    [ ] compte local géré identifié
+    [ ] sauvegarde du secret comprise
+    [ ] secrets distincts par machine
+    [ ] lecture autorisée démontrée
+    [ ] refus non autorisé démontré
+    [ ] rotation comprise ou validée
+    [ ] aucun secret versionné
+    [ ] différence LAPS / PAM comprise
+
+# Questions de restitution
+
+1. Quel problème Windows LAPS résout-il ?
+2. Pourquoi un mot de passe administrateur local commun facilite-t-il le mouvement latéral ?
+3. Pourquoi le secret LAPS ne doit-il pas être lisible par tous ?
+4. Que se passe-t-il si une personne récupère un mot de passe LAPS puis que celui-ci est rotaté ?
+5. Pourquoi LAPS ne remplace-t-il pas un PAM ?
+6. Pourquoi faut-il tester un refus de lecture ?
+
+# Checkpoint M07
+
+    LAPS fonctionnel
+    +
+    permissions maîtrisées
+    +
+    rotation comprise
+    +
+    aucun secret exposé
+
+Snapshot conseillé : M07-LAPS-OK.
