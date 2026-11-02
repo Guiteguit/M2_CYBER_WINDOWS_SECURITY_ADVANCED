@@ -11,6 +11,19 @@
 Le disque de `SRV01` peut être augmenté si vous souhaitez manipuler davantage de données de test.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : utilisateurs, groupes, OU et authentification de domaine ;
+- M03 : logique de moindre privilège et de validation effective.
+
+**Produit pour la suite :**
+- modèle de groupes d'accès ;
+- tests positifs et négatifs de permissions ;
+- premier service métier sur `SRV01`.
+
+Ces éléments enrichissent l'audit AD de M05 et la réflexion sur les délégations de M06.
+
 ## Contexte
 
 NovaCorp doit mettre à disposition des espaces de fichiers pour plusieurs équipes sans exposer les données sensibles aux mauvais utilisateurs.
