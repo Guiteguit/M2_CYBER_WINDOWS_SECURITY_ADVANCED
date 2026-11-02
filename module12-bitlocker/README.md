@@ -10,6 +10,20 @@
 **Attention stockage hyperviseur :** BitLocker peut faire grossir fortement les disques thin-provisioned et les snapshots. Vérifiez l'espace disponible avant toute conversion réelle.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : `CLT01` joint au domaine et AD DS disponible ;
+- M03 : logique de politique centralisée ;
+- M06 : moindre privilège pour l'accès aux secrets de récupération.
+
+**Produit pour la suite :**
+- compréhension TPM / Secure Boot / chiffrement disque ;
+- modèle de Recovery Password ;
+- éventuelle sauvegarde AD DS.
+
+M13 complète cette protection des données au repos par le durcissement de l'endpoint en fonctionnement.
+
 ## Contexte NovaCorp
 
 NovaCorp souhaite protéger les données stockées sur les postes utilisateurs, en particulier en cas de perte, de vol ou d'accès physique au support.
