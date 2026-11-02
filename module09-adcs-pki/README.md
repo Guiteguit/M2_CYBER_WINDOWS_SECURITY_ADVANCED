@@ -1,5 +1,19 @@
 # Module 09 — AD CS / PKI Windows
 
+## Ressources système recommandées
+
+> Dimensionnement de lab. La PKI dispose désormais de sa VM dédiée.
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / DNS | 2 | 4 Go | 60 Go |
+| PKI01 | AD CS / CA Enterprise | 2 | 4 Go | 60 Go |
+| SRV01 | serveur consommateur de certificats | 2 | 4 Go | 60 Go |
+| CLT01 | validation de la chaîne | 2 | 4–6 Go | 64 Go |
+
+PKI01 doit être joint au domaine et disposer d'une IP statique. La CA n'est pas installée sur DC01 ni sur SRV01.
+
+
 ## Contexte NovaCorp
 
 NovaCorp doit publier des services HTTPS internes sans dépendre de certificats autosignés distribués manuellement.
