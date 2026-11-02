@@ -1,5 +1,16 @@
 # Module 04 — File Server, SMB, NTFS & ACL
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | identités / groupes | 2 | 4 Go | 60 Go |
+| SRV01 | File Server | 2 | 4 Go | 80 Go |
+| CLT01 | tests utilisateurs | 2 | 4–6 Go | 64 Go |
+
+Le disque de `SRV01` peut être augmenté si vous souhaitez manipuler davantage de données de test.
+
+
 ## Contexte
 
 NovaCorp doit mettre à disposition des espaces de fichiers pour plusieurs équipes sans exposer les données sensibles aux mauvais utilisateurs.
