@@ -23,6 +23,18 @@
 
 Ces éléments deviennent le socle des modules M03 à M16.
 
+## Aide technique et troubleshooting
+
+Le README reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d'implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte
 
 NovaCorp souhaite centraliser les identités, les machines et les politiques de sécurité. Votre équipe doit construire le premier domaine Active Directory de l'entreprise.
