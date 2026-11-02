@@ -14,6 +14,21 @@
 PKI01 doit être joint au domaine et disposer d'une IP statique. La CA n'est pas installée sur DC01 ni sur SRV01.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : domaine, DNS et machines membres ;
+- M03 : logique de déploiement par stratégie et validation ;
+- M06 : séparation des rôles sensibles et moindre privilège.
+
+**Produit pour la suite :**
+- serveur dédié `PKI01` ;
+- CA NovaCorp opérationnelle ;
+- chaîne de confiance ;
+- templates et certificats serveur.
+
+M10 et M11 dépendent directement de cette PKI.
+
 ## Contexte NovaCorp
 
 NovaCorp doit publier des services HTTPS internes sans dépendre de certificats autosignés distribués manuellement.
