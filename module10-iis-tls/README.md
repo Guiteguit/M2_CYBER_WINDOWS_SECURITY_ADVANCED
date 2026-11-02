@@ -379,7 +379,7 @@ peut aider à comprendre le contexte d'authentification mais **ne suffit pas à 
 
 ## État du lab de référence
 
-Cette partie doit encore être validée expérimentalement.
+Le lab de référence a validé l'affichage de l'utilisateur authentifié dans la page IIS après configuration de Windows Authentication et du contexte navigateur approprié.
 
 ---
 
