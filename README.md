@@ -11,8 +11,6 @@ Ce dépôt contient les travaux pratiques étudiants du module **T1 — Sécurit
 - 4 journées
 - Approche : construction, sécurisation, audit, validation et observabilité
 
----
-
 ## Méthode de travail
 
 Chaque module suit le cycle :
@@ -27,8 +25,8 @@ Règles communes :
 4. Une configuration doit être expliquée et testée, pas seulement appliquée.
 5. Les livrables restent courts, mais contiennent des preuves.
 6. Aucun mot de passe, secret, clé privée ou certificat privé ne doit être versionné.
-
----
+7. Les commandes fournies servent prioritairement au diagnostic et à la validation.
+8. Lorsqu'un lab ne peut pas être exécuté complètement pour une contrainte technique, le résultat attendu et le mécanisme doivent être compris et documentés.
 
 # Parcours
 
@@ -53,14 +51,14 @@ Voir : [day02.md](day02.md)
 - [M07 — Windows LAPS](module07-laps/README.md)
 - [M08 — gMSA + concepts PAM](module08-gmsa-pam/README.md)
 - [M09 — AD CS / PKI](module09-adcs-pki/README.md)
-- [M10 — IIS + TLS](module10-iis-tls/README.md)
+- [M10 — IIS + TLS + Kerberos](module10-iis-tls/README.md)
 - [M11 — MFA / AD FS / Entra ID](module11-mfa-adfs-entra/README.md)
 
 Voir : [day03.md](day03.md)
 
 ## Jour 4 — Endpoint, administration, SIEM et vulnérabilités
 
-- [M12 — BitLocker](module12-bitlocker/README.md)
+- [M12 — BitLocker / TPM / Recovery](module12-bitlocker/README.md)
 - [M13 — Endpoint Security](module13-endpoint-security/README.md)
 - [M14 — Administration distante sécurisée](module14-secure-admin/README.md)
 - [M15 — Sysmon + Wazuh](module15-sysmon-wazuh/README.md)
@@ -68,23 +66,20 @@ Voir : [day03.md](day03.md)
 
 Voir : [day04.md](day04.md)
 
----
-
 # Architecture générale
 
-Le SI évolue pendant le cursus autour de plusieurs rôles :
+Le SI évolue autour de plusieurs rôles :
 
 - `DC01` — Active Directory / DNS / GPO
-- `SRV01` — File Server / IIS / services
+- `SRV01` — File Server / IIS / services / éventuellement AD CS
 - `CLT01` — poste Windows 11
-- `CLT02` ou machine transverse selon les groupes
-- `PKI01` — AD CS lorsque l'architecture le permet
+- `CLT02` — poste supplémentaire selon les groupes
+- `PKI01` — AD CS lorsque l'architecture dispose d'une VM dédiée
+- `ADFS01` — AD FS dans le POC M11
 - `SEC01` — Wazuh
 - `VULN01` — Greenbone / OpenVAS
 
-L'architecture exacte dépend des ressources disponibles. Plusieurs rôles peuvent être mutualisés dans un lab contraint tant que les choix sont documentés.
-
----
+Les rôles peuvent être mutualisés dans un lab contraint tant que les choix sont documentés.
 
 # Groupes et rôles
 
@@ -98,30 +93,32 @@ Les responsabilités tournent entre :
 - sécurité / audit ;
 - documentation / architecture.
 
-Un rôle d'audit ou de documentation ne signifie jamais « observer » : il inclut des contrôles techniques et une validation croisée.
-
----
+Un rôle d'audit ou de documentation inclut toujours des contrôles techniques.
 
 # Checkpoints
-
-Les snapshots/checkpoints permettent de reprendre rapidement après une erreur de manipulation.
 
 Repères conseillés :
 
 - `M01-FOUNDATION-OK`
-- `M06-AD-HARDENING-OK`
-- `M11-IDENTITY-PKI-OK`
-- `M16-SECURITY-OBSERVABILITY-OK`
+- `M02-AD-DNS-OK`
+- `M03-GPO-OK`
+- `M04-FILESERVER-OK`
+- `M05-AUDIT-OK`
+- `M06-PRIVILEGES-OK`
+- `M07-LAPS-OK`
+- `M08-GMSA-PAM-OK`
+- `M09-ADCS-PKI-OK`
+- `M10-IIS-TLS-KERBEROS-OK`
+- `M11-ADFS-FEDERATION-OK`
+- `M12-BITLOCKER-OK`
 
----
+Les snapshots sont des points de retour techniques, pas une preuve pédagogique à eux seuls.
 
 # Documentation commune
 
 - [Architecture](docs/architecture.md)
 - [Conventions](docs/conventions.md)
 - [Livrables](docs/deliverables.md)
-
----
 
 # Sécurité du dépôt
 
