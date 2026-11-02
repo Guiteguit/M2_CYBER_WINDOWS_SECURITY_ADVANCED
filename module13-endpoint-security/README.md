@@ -1,5 +1,14 @@
 # Module 13 — Endpoint Security
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | GPO / politiques de domaine | 2 | 4 Go | 60 Go |
+| CLT01 | endpoint principal de test | 2 | 4–6 Go | 64 Go |
+| SRV01 | validation de politiques serveur | 2 | 4 Go | 60 Go |
+
+
 ## Contexte NovaCorp
 
 NovaCorp veut réduire la surface d'attaque de ses postes et serveurs sans rendre les machines inutilisables.
