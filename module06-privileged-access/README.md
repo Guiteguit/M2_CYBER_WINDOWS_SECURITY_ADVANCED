@@ -9,6 +9,20 @@
 | SRV01 | cible d'administration si nécessaire | 2 | 4 Go | 60 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : structure AD, OU et groupes ;
+- M05 : constats d'audit et risques liés aux privilèges.
+
+**Produit pour la suite :**
+- séparation compte utilisateur / compte administrateur ;
+- délégation ciblée ;
+- modèle break-glass ;
+- protections des comptes privilégiés.
+
+Ce modèle est réutilisé dans M07 (droits de lecture LAPS), M08 (PAM), M11 (identité) et M14 (administration distante).
+
 ## Contexte NovaCorp
 
 NovaCorp utilise encore des comptes très privilégiés pour des opérations qui pourraient être réalisées avec beaucoup moins de droits.
