@@ -9,6 +9,18 @@
 | CLT01 | cible GPO poste | 2 | 4–6 Go | 64 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : domaine fonctionnel, DNS AD, OU structurées et machines jointes.
+
+**Produit pour la suite :**
+- premières baselines GPO ;
+- méthode de validation avec RSOP / gpresult ;
+- logique d'exception et de rollback.
+
+Cette logique sera réutilisée notamment dans M07 (LAPS), M12 (BitLocker) et M13 (Endpoint Security).
+
 ## Contexte
 
 L'Active Directory de NovaCorp fonctionne. Le RSSI demande maintenant une première politique de sécurité homogène pour les postes et serveurs.
