@@ -10,6 +10,20 @@
 PingCastle peut être exécuté depuis une machine membre disposant des droits nécessaires ; il n'est pas nécessaire de l'installer sur le contrôleur de domaine.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : domaine et DNS ;
+- M03 : GPO / hardening ;
+- M04 : groupes, ACL et premières décisions de moindre privilège.
+
+**Produit pour la suite :**
+- photographie de la posture AD ;
+- findings priorisés ;
+- remédiations testées.
+
+Les constats servent de base à M06 pour réduire les privilèges et préparer LAPS / gMSA / PAM.
+
 ## Contexte NovaCorp
 
 Le domaine `novacorp.local` fonctionne désormais depuis plusieurs modules.
