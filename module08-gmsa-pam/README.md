@@ -9,6 +9,21 @@
 | CLT01 | validation / administration | 2 | 4 Go | 64 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : domaine AD et objets ordinateur ;
+- M06 : séparation des privilèges et comptes administratifs ;
+- M07 : logique de rotation et de délégation de secrets.
+
+**Produit pour la suite :**
+- KDS Root Key validée ;
+- groupe d'hôtes autorisés ;
+- gMSA `NOVACORP\gmsa-demo$` utilisable sur `SRV01` ;
+- comparaison LAPS / gMSA / PAM.
+
+Le gMSA sera réutilisé directement dans M10 pour l'Application Pool IIS et la logique gMSA sera reprise dans M11 pour AD FS.
+
 ## Objectifs
 
 À la fin de ce module, vous devez être capables de :
