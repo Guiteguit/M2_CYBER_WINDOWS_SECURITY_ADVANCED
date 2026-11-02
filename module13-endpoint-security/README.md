@@ -45,6 +45,26 @@ OBSERVER
 
 Une protection n'est pas considérée comme validée simplement parce qu'elle apparaît dans une GPO ou une commande.
 
+## Aide technique et debug
+
+Le README reste volontairement orienté **mission, analyse et validation**.
+
+Si vous bloquez sur l'implémentation ou le diagnostic, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Cette toolbox contient notamment :
+
+- commandes de baseline Defender / Firewall / AppLocker / PowerShell ;
+- exemple ASR WMI/PsExec en Audit puis Block ;
+- exemple AppLocker AuditOnly puis Enforcement ;
+- événements 1121 / 1122 / 8003 / 8004 / 4104 ;
+- mini-lab Firewall TCP ;
+- exemples de rollback ;
+- tableau de diagnostic rapide.
+
+Utilisez-la comme **support de dépannage**, pas comme procédure à recopier sans comprendre.
+
 ---
 
 ## Objectifs
