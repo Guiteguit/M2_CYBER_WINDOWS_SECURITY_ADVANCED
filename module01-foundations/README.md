@@ -1,5 +1,19 @@
 # Module 01 — Fondations du laboratoire Windows
 
+## Ressources système recommandées
+
+> Dimensionnement de **lab**, pas de production.
+
+| VM | Rôle | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | futur AD DS / DNS | 2 | 4 Go | 60 Go |
+| SRV01 | serveur membre / services | 2 | 4 Go | 60 Go |
+| CLT01 | poste Windows 11 | 2 | 4–6 Go | 64 Go |
+| CLT02 | poste supplémentaire si utilisé | 2 | 4 Go | 64 Go |
+
+Prévoyez dès le départ de la marge disque sur l'hyperviseur pour les snapshots des modules suivants.
+
+
 ## Durée
 
 1h30
