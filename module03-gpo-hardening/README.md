@@ -1,5 +1,14 @@
 # Module 03 — GPO & Hardening Windows
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | GPMC / AD DS | 2 | 4 Go | 60 Go |
+| SRV01 | cible GPO serveur | 2 | 4 Go | 60 Go |
+| CLT01 | cible GPO poste | 2 | 4–6 Go | 64 Go |
+
+
 ## Contexte
 
 L'Active Directory de NovaCorp fonctionne. Le RSSI demande maintenant une première politique de sécurité homogène pour les postes et serveurs.
