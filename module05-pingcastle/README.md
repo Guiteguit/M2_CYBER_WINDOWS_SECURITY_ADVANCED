@@ -1,5 +1,15 @@
 # Module 05 — Audit Active Directory avec PingCastle
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | domaine audité | 2 | 4 Go | 60 Go |
+| CLT01 | poste d'audit / consultation | 2 | 4–6 Go | 64 Go |
+
+PingCastle peut être exécuté depuis une machine membre disposant des droits nécessaires ; il n'est pas nécessaire de l'installer sur le contrôleur de domaine.
+
+
 ## Contexte NovaCorp
 
 Le domaine `novacorp.local` fonctionne désormais depuis plusieurs modules.
