@@ -14,18 +14,27 @@ Documentez :
 
 - DC01 ;
 - SRV01 ;
+- PKI01 ;
 - ADFS01 ;
 - CLT01 ;
 - fs.novacorp.local ;
 - claims.novacorp.local.
 
-## AD DS
+## AD DS — DC01
 
 Rôle :
 
 Ce qu'il ne fait pas dans ce scénario :
 
-## AD FS
+## PKI — PKI01
+
+Rôle de la CA NovaCorp :
+
+Certificats émis pour le POC :
+
+Pourquoi la PKI est-elle séparée de SRV01 et ADFS01 ?
+
+## AD FS — ADFS01
 
 Rôle :
 
@@ -35,7 +44,7 @@ Base de configuration :
 
 Nom du Federation Service :
 
-## Relying Party
+## Relying Party — SRV01
 
 Application :
 
@@ -49,9 +58,13 @@ Endpoint :
 
 Rôle :
 
+CA émettrice :
+
 ### Token-Signing
 
 Rôle :
+
+Pourquoi ce certificat est-il distinct du certificat TLS ?
 
 ### Token-Decrypting
 
