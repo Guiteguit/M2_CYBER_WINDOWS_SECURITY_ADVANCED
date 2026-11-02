@@ -71,15 +71,15 @@ Voir : [day04.md](day04.md)
 Le SI évolue autour de plusieurs rôles :
 
 - `DC01` — Active Directory / DNS / GPO
-- `SRV01` — File Server / IIS / services / éventuellement AD CS
+- `SRV01` — File Server / IIS / services applicatifs
 - `CLT01` — poste Windows 11
 - `CLT02` — poste supplémentaire selon les groupes
-- `PKI01` — AD CS lorsque l'architecture dispose d'une VM dédiée
+- `PKI01` — AD CS / autorité de certification dédiée
 - `ADFS01` — AD FS dans le POC M11
 - `SEC01` — Wazuh
 - `VULN01` — Greenbone / OpenVAS
 
-Les rôles peuvent être mutualisés dans un lab contraint tant que les choix sont documentés.
+Les rôles applicatifs peuvent être mutualisés dans un lab contraint tant que les choix sont documentés. **AD CS reste toutefois dédié à `PKI01` dans le parcours de référence**, afin de séparer clairement l'autorité de certification des serveurs applicatifs.
 
 # Groupes et rôles
 
