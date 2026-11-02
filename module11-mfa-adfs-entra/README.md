@@ -13,6 +13,22 @@
 Pour un poste formateur disposant de peu de RAM, les VMs non utilisées pendant une étape peuvent être arrêtées. Ne mutualisez pas AD FS et AD CS pour ce TP.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : AD DS / DNS / Kerberos ;
+- M08 : logique gMSA ;
+- M09 : PKI `PKI01` pour les certificats de service ;
+- M10 : IIS, HTTPS, SSO Windows et compréhension de Kerberos.
+
+**Produit pour la suite :**
+- `ADFS01` dédié ;
+- relation de confiance avec une Relying Party ;
+- compréhension claims / token / issuer ;
+- positionnement MFA et Entra ID.
+
+Le module clôt le bloc identité avant les protections endpoint.
+
 ## Contexte NovaCorp
 
 NovaCorp utilise Active Directory Domain Services pour ses identités internes.
