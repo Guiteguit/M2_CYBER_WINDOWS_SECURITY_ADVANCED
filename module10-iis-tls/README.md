@@ -1,5 +1,15 @@
 # Module 10 — IIS, TLS et SSO Kerberos
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / DNS / KDC | 2 | 4 Go | 60 Go |
+| PKI01 | CA NovaCorp | 2 | 4 Go | 60 Go |
+| SRV01 | IIS / NovaCorp-Web | 2 | 4–6 Go | 60 Go |
+| CLT01 | client domaine / tests Kerberos | 2 | 4–6 Go | 64 Go |
+
+
 ## Contexte NovaCorp
 
 NovaCorp souhaite publier un intranet interne sécurisé sur :
