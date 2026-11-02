@@ -24,6 +24,18 @@ PingCastle peut être exécuté depuis une machine membre disposant des droits n
 
 Les constats servent de base à M06 pour réduire les privilèges et préparer LAPS / gMSA / PAM.
 
+## Aide technique et troubleshooting
+
+Le README reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d'implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte NovaCorp
 
 Le domaine `novacorp.local` fonctionne désormais depuis plusieurs modules.
