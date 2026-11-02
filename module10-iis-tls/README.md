@@ -10,6 +10,22 @@
 | CLT01 | client domaine / tests Kerberos | 2 | 4–6 Go | 64 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M02 : DNS, domaine et Kerberos/KDC ;
+- M08 : gMSA `NOVACORP\gmsa-demo$` ;
+- M09 : `PKI01`, chaîne de confiance et certificat pour `web.novacorp.local`.
+
+**Produit pour la suite :**
+- site IIS `NovaCorp-Web` ;
+- authentification Windows intégrée ;
+- SPN HTTP maîtrisé ;
+- preuve Kerberos ;
+- distinction TLS / Kerberos / gMSA.
+
+Ces notions sont réutilisées dans M11 pour comparer authentification intégrée et fédération.
+
 ## Contexte NovaCorp
 
 NovaCorp souhaite publier un intranet interne sécurisé sur :
