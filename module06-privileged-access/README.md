@@ -23,6 +23,18 @@
 
 Ce modèle est réutilisé dans M07 (droits de lecture LAPS), M08 (PAM), M11 (identité) et M14 (administration distante).
 
+## Aide technique et troubleshooting
+
+Le README reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d'implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d'implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte NovaCorp
 
 NovaCorp utilise encore des comptes très privilégiés pour des opérations qui pourraient être réalisées avec beaucoup moins de droits.
