@@ -1,5 +1,17 @@
 # Module 15 — Sysmon + Wazuh
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | source Windows / Sysmon | 2 | 4 Go | 60 Go |
+| SRV01 | source Windows / Sysmon | 2 | 4 Go | 60 Go |
+| CLT01 | source Windows / Sysmon | 2 | 4–6 Go | 64 Go |
+| SEC01 | Wazuh all-in-one de lab | 4 | 8 Go minimum | 100 Go |
+
+Pour Wazuh, 8 Go de RAM est un minimum de lab. Si l'hôte le permet, 12 Go améliorent nettement le confort.
+
+
 ## Contexte NovaCorp
 
 NovaCorp dispose désormais de plusieurs mécanismes de sécurité, mais manque encore de visibilité centralisée.
