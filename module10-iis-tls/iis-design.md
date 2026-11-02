@@ -6,26 +6,24 @@
 
 Dessinez le flux :
 
-```text
-CLT01
-  ↓
-web.novacorp.local
-  ↓
-SRV01 / IIS
-  ↓
-Application Pool
-  ↓
-gMSA
-```
+    CLT01
+      ↓
+    web.novacorp.local
+      ↓
+    SRV01 / IIS
+      ↓
+    Application Pool
+      ↓
+    gMSA
 
 Ajoutez les interactions avec :
 
-- DNS ;
-- PKI ;
-- KDC ;
+- DNS / DC01 ;
+- PKI / PKI01 ;
+- KDC / DC01 ;
 - Active Directory.
 
----
+Précisez que le certificat serveur est émis par la CA NovaCorp hébergée sur PKI01, tandis que sa clé privée de service se trouve sur SRV01.
 
 ## 2. Identité du site
 
@@ -33,8 +31,6 @@ Ajoutez les interactions avec :
 - justification :
 - enregistrement DNS :
 - méthode de validation :
-
----
 
 ## 3. Site IIS
 
@@ -45,8 +41,6 @@ Ajoutez les interactions avec :
 - composants IIS installés :
 - justification :
 
----
-
 ## 4. Identité du processus
 
 - identité du pool :
@@ -55,8 +49,6 @@ Ajoutez les interactions avec :
 - droits volontairement non accordés :
 - preuve de fonctionnement :
 
----
-
 ## 5. Authentification utilisateur
 
 - méthode :
@@ -64,8 +56,6 @@ Ajoutez les interactions avec :
 - Windows Authentication :
 - providers :
 - raison du choix :
-
----
 
 ## 6. Kerberos
 
@@ -76,8 +66,6 @@ Ajoutez les interactions avec :
 - preuve côté client :
 - preuve côté serveur :
 
----
-
 ## 7. Navigateur
 
 - comportement initial :
@@ -86,21 +74,17 @@ Ajoutez les interactions avec :
 - justification :
 - impact sur l'envoi automatique des credentials :
 
----
-
 ## 8. Différences à maîtriser
 
-Expliquez en quelques phrases :
-
 ### TLS vs Kerberos
+
+### CA / PKI01 vs certificat installé sur SRV01
 
 ### Utilisateur authentifié vs identité AppPool
 
 ### Kerberos vs NTLM
 
 ### SSO vs MFA
-
----
 
 ## 9. Risques / limites
 
