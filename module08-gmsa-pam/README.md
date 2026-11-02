@@ -1,5 +1,14 @@
 # Module 08 — gMSA & concepts PAM
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / KDS / gMSA | 2 | 4 Go | 60 Go |
+| SRV01 | hôte du service utilisant le gMSA | 2 | 4–6 Go | 60 Go |
+| CLT01 | validation / administration | 2 | 4 Go | 64 Go |
+
+
 ## Objectifs
 
 À la fin de ce module, vous devez être capables de :
