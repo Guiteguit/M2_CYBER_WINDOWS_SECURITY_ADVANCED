@@ -12,6 +12,21 @@
 Pour Wazuh, 8 Go de RAM est un minimum de lab. Si l'hôte le permet, 12 Go améliorent nettement le confort.
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M03 / M13 : audit Windows et journalisation PowerShell ;
+- M14 : événements d'administration distante ;
+- l'ensemble des modules précédents comme sources d'événements de sécurité.
+
+**Produit pour la suite :**
+- `SEC01` avec Wazuh ;
+- agents Windows ;
+- télémétrie Sysmon / Security / System / PowerShell ;
+- premières capacités de hunting et corrélation.
+
+M16 pourra utiliser ce contexte d'actifs et de contrôles compensatoires pour mieux prioriser les vulnérabilités.
+
 ## Contexte NovaCorp
 
 NovaCorp dispose désormais de plusieurs mécanismes de sécurité, mais manque encore de visibilité centralisée.
