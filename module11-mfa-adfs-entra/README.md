@@ -20,7 +20,8 @@ NovaCorp utilise Active Directory Domain Services pour ses identités internes.
 Après les modules précédents, l'infrastructure dispose déjà de :
 
 - `DC01` : AD DS, DNS, KDC ;
-- `SRV01` : IIS, PKI NovaCorp et applications internes ;
+- `SRV01` : IIS et applications internes ;
+- `PKI01` : AD CS / CA NovaCorp ;
 - `CLT01` : poste client joint au domaine ;
 - une PKI interne ;
 - des gMSA ;
@@ -58,8 +59,12 @@ AD DS / DNS
 192.168.150.10
 
 SRV01
-IIS / PKI / NovaCorp-Claims
+IIS / NovaCorp-Claims
 192.168.150.20
+
+PKI01
+AD CS / CA NovaCorp
+adresse selon le plan du groupe
 
 ADFS01
 AD FS / WID
@@ -510,7 +515,7 @@ troubleshooting.md
 
 - A : AD DS / DNS / identité ;
 - B : AD FS ;
-- C : PKI / certificats / gMSA ;
+- C : certificats / gMSA / relation avec PKI01 ;
 - D : Relying Party / application ;
 - E : client / audit / troubleshooting.
 
@@ -518,7 +523,7 @@ troubleshooting.md
 
 - A : AD DS / identité ;
 - B : AD FS ;
-- C : PKI + application ;
+- C : certificats + application ;
 - D : client + audit.
 
 Les rôles doivent tourner.
