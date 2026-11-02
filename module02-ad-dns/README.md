@@ -1,5 +1,15 @@
 # Module 02 — Active Directory Domain Services & DNS
 
+## Ressources système recommandées
+
+| VM | Rôle dans ce TP | vCPU | RAM | Disque |
+|---|---|---:|---:|---:|
+| DC01 | AD DS / DNS | 2 | 4 Go | 60 Go |
+| SRV01 | serveur membre | 2 | 4 Go | 60 Go |
+| CLT01 | client joint au domaine | 2 | 4–6 Go | 64 Go |
+| CLT02 | client optionnel | 2 | 4 Go | 64 Go |
+
+
 ## Contexte
 
 NovaCorp souhaite centraliser les identités, les machines et les politiques de sécurité. Votre équipe doit construire le premier domaine Active Directory de l'entreprise.
