@@ -10,14 +10,14 @@ Les rôles principaux utilisent les noms suivants :
 - `SRV01` — serveur membre et services
 - `CLT01` — poste Windows
 - `CLT02` — second poste si nécessaire
-- `PKI01` — CA dédiée lorsque les ressources le permettent
+- `PKI01` — AD CS / CA dédiée
 - `ADFS01` — AD FS pour le POC M11
 - `SEC01` — Wazuh
 - `VULN01` — Greenbone / OpenVAS
 
-Dans un lab contraint, certains rôles peuvent être mutualisés, par exemple AD CS sur `SRV01`.
+Les rôles applicatifs peuvent être mutualisés si nécessaire, mais **la PKI ne l'est pas dans l'architecture de référence** : AD CS est installé sur `PKI01` afin d'isoler l'autorité de certification de `DC01`, `SRV01` et `ADFS01`.
 
-Toute mutualisation doit être documentée avec ses compromis.
+Cette séparation facilite la compréhension des flux de confiance, limite le mélange des rôles et prépare mieux aux architectures PKI de production.
 
 ## Réseaux
 
@@ -38,7 +38,8 @@ Le plan d'adressage exact est défini par chaque groupe puis documenté.
 L'architecture peut notamment contenir :
 
     DC01    → AD DS / DNS
-    SRV01   → services / IIS / PKI selon contraintes
+    SRV01   → services / IIS
+    PKI01   → AD CS / CA NovaCorp
     ADFS01  → AD FS
     CLT01   → poste Windows
 
