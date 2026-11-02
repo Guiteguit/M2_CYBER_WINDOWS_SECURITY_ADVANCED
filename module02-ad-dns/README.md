@@ -10,6 +10,19 @@
 | CLT02 | client optionnel | 2 | 4 Go | 64 Go |
 
 
+## Prérequis et dépendances
+
+**Réutilise :**
+- M01 : plan IP, hostnames, connectivité inter-VM, firewall actif et snapshot `M01-FOUNDATION-OK`.
+
+**Produit pour la suite :**
+- domaine `novacorp.local` ;
+- DNS Active Directory ;
+- OU, utilisateurs et groupes ;
+- `SRV01` et `CLT01` joints au domaine.
+
+Ces éléments deviennent le socle des modules M03 à M16.
+
 ## Contexte
 
 NovaCorp souhaite centraliser les identités, les machines et les politiques de sécurité. Votre équipe doit construire le premier domaine Active Directory de l'entreprise.
