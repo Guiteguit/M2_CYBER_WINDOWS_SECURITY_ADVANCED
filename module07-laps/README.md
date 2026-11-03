@@ -23,6 +23,18 @@
 
 M08 réutilise cette logique pour comparer LAPS, gMSA et PAM.
 
+## Aide technique et troubleshooting
+
+Le README principal reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d’implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d’implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte NovaCorp
 
 NovaCorp utilise encore des mots de passe d'administrateur local partagés ou gérés manuellement.
