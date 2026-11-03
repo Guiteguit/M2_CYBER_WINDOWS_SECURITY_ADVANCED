@@ -38,6 +38,18 @@ Le gMSA sera réutilisé directement dans M10 pour l'Application Pool IIS et la 
 
 ---
 
+## Aide technique et troubleshooting
+
+Le README principal reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d’implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d’implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 # Contexte NovaCorp
 
 NovaCorp possède plusieurs services Windows nécessitant une identité de domaine.
