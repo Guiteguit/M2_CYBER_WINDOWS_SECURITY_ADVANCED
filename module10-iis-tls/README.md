@@ -26,6 +26,18 @@
 
 Ces notions sont réutilisées dans M11 pour comparer authentification intégrée et fédération.
 
+## Aide technique et troubleshooting
+
+Le README principal reste orienté **mission, conception et validation**.
+
+Pour les commandes utiles, exemples d’implémentation, méthodes de test, troubleshooting, rollback et références officielles, utilisez :
+
+- [Toolbox Debug & Exemples d’implémentation](toolbox-debug-implementation.md)
+
+Utilisez cette toolbox pour comprendre et diagnostiquer, pas pour recopier une procédure sans analyser le résultat.
+
+---
+
 ## Contexte NovaCorp
 
 NovaCorp souhaite publier un intranet interne sécurisé sur :
